@@ -31,6 +31,7 @@
 #include <string.h>
 #include <panic/panic.h>
 #include <alligator/alligator.h>
+#include <stdio.h>
 #include "text.h"
 #include "text_config.h"
 
@@ -80,6 +81,37 @@ Text Text_withCapacity(size_t capacity) {
     header->content[header->length = 0] = 0;
     header->content[header->capacity = capacity] = 0;
     return header->content;
+}
+
+Text Text_format(const char *format, ...) {
+    assert(format);
+
+    va_list args;
+    va_start(args, format);
+    Text text = Text_vformat(format, args);
+    va_end(args);
+    return text;
+}
+
+Text Text_vformat(const char *format, va_list args) {
+    assert(format);
+    va_list argsCopy;
+
+    va_copy(argsCopy, args);
+    const int formattedSize = vsnprintf(NULL, 0, format, argsCopy);
+    va_end(argsCopy);
+
+    if (formattedSize < 0) {
+        Panic_terminate("Unable to format string");
+    }
+
+    const size_t length = (size_t) formattedSize;
+    Text text = Text_withCapacity(length);
+    struct Text_Header *header = (struct Text_Header *) text - 1;
+
+    vsnprintf(header->content, length + 1, format, args);
+    header->length = length;
+    return text;
 }
 
 Text Text_fromBytes(const void *const bytes, const size_t size) {

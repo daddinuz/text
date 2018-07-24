@@ -26,15 +26,14 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include <text.h>
+#include <stdio.h>
+#include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+int main() {
+    Text text = Text_format("size max is: %lu\n", SIZE_MAX);
+    printf("[length: %zu, capacity: %zu] %s", Text_length(text), Text_capacity(text), text);
 
-#define TEXT_DEFAULT_CAPACITY   128UL   // must be greater or equal than 32UL and less than SIZE_MAX
-#define TEXT_LOAD_FACTOR        1.6F    // must be greater than 1.1F
-
-#ifdef __cplusplus
+    Text_delete(text);
+    return 0;
 }
-#endif

@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -71,6 +72,32 @@ __attribute__((__warn_unused_result__));
  */
 extern Text Text_withCapacity(size_t capacity)
 __attribute__((__warn_unused_result__));
+
+/**
+ * Creates a new text from a printf-like format.
+ *
+ * @attention format must not be NULL.
+ *
+ * @param format The printf-like format string.
+ * @param ... The args for format.
+ * @return A new text instance.
+ */
+extern Text
+Text_format(const char *format, ...)
+__attribute__((__warn_unused_result__, __nonnull__(1), __format__(printf, 1, 2)));
+
+/**
+ * Creates a new text from a printf-like format, behaves like Text_format but takes a va_list.
+ *
+ * @attention format must not be NULL.
+ *
+ * @param format The printf-like format string.
+ * @param args The args for format.
+ * @return A new text instance.
+ */
+extern Text
+Text_vformat(const char *format, va_list args)
+__attribute__((__warn_unused_result__, __nonnull__, __format__(__printf__, 1, 0)));
 
 /**
  * Creates a new text from the given bytes array.

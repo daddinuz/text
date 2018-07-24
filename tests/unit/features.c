@@ -88,6 +88,123 @@ Feature(withCapacity_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
+Feature(format) {
+    Text sut = NULL;
+
+    {
+#define FORMAT      "Hello World!"
+
+        char EXPECTED[1024];
+        snprintf(EXPECTED, sizeof(EXPECTED) - 1, FORMAT);
+        const size_t EXPECTED_SIZE = strlen(EXPECTED);
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_format(FORMAT);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+#undef FORMAT
+    }
+
+    Text_delete(sut);
+
+    {
+#define FORMAT      "%s", ""
+
+        char EXPECTED[1024];
+        snprintf(EXPECTED, sizeof(EXPECTED) - 1, FORMAT);
+        const size_t EXPECTED_SIZE = strlen(EXPECTED);
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_format(FORMAT);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+#undef FORMAT
+    }
+
+    Text_delete(sut);
+
+    {
+#define FORMAT      "%s%c%s!%c", "Hello", ' ', "World", '\n'
+
+        char EXPECTED[1024];
+        snprintf(EXPECTED, sizeof(EXPECTED) - 1, FORMAT);
+        const size_t EXPECTED_SIZE = strlen(EXPECTED);
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_format(FORMAT);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+#undef FORMAT
+    }
+
+    Text_delete(sut);
+
+    {
+#define FORMAT      "%*s %20d %-15zu %.5f %Lf %p %c", 25, "AaA", -543532, 629870197LU, 98763.4865f, 98739847.4L, NULL, '!'
+
+        char EXPECTED[1024];
+        snprintf(EXPECTED, sizeof(EXPECTED) - 1, FORMAT);
+        const size_t EXPECTED_SIZE = strlen(EXPECTED);
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_format(FORMAT);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+#undef FORMAT
+    }
+
+    Text_delete(sut);
+
+    {
+#define FORMAT      "%*s %20d %-15zu %.5f %Lf %p %0*i", 25, "AaA", -543532, 629870197LU, 98763.4865f, 98739847.4L, NULL, 35, 0
+
+        char EXPECTED[1024];
+        snprintf(EXPECTED, sizeof(EXPECTED) - 1, FORMAT);
+        const size_t EXPECTED_SIZE = strlen(EXPECTED);
+        assert_greater(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = EXPECTED_SIZE;
+
+        sut = Text_format(FORMAT);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(EXPECTED_CAPACITY, Text_capacity(sut));
+
+#undef FORMAT
+    }
+
+    Text_delete(sut);
+}
+
+Feature(format_checkRuntimeErrors) {
+    Text sut = NULL;
+    const char *format = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_format(format, NULL);
+        (void) sut;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
 Feature(fromBytes) {
     Text sut = NULL;
     const struct ByteArray bytesArray[] = {

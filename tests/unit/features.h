@@ -39,6 +39,9 @@ Feature(new);
 Feature(withCapacity);
 Feature(withCapacity_checkRuntimeErrors);
 
+Feature(format);
+Feature(format_checkRuntimeErrors);
+
 Feature(fromBytes);
 Feature(fromBytes_checkRuntimeErrors);
 
