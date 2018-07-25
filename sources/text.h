@@ -57,7 +57,7 @@ typedef char *Text;
 /**
  * Creates an empty text using default capacity.
  *
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text Text_new(void)
 __attribute__((__warn_unused_result__));
@@ -68,10 +68,24 @@ __attribute__((__warn_unused_result__));
  * @attention capacity must be less than SIZE_MAX.
  *
  * @param capacity The initial capacity.
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text Text_withCapacity(size_t capacity)
 __attribute__((__warn_unused_result__));
+
+/**
+ * Creates a new JSON compliant quoted instance of text starting from bytes.
+ *
+ * @attention bytes array must not be NULL.
+ * @attention the size of the bytes array must be less than SIZE_MAX.
+ *
+ * @param bytes The sequence of bytes.
+ * @param size The size of bytes.
+ * @return a new text instance.
+ */
+extern Text
+Text_quoted(const void *bytes, size_t size)
+__attribute__((__warn_unused_result__, __nonnull__));
 
 /**
  * Creates a new text from a printf-like format.
@@ -80,7 +94,7 @@ __attribute__((__warn_unused_result__));
  *
  * @param format The printf-like format string.
  * @param ... The args for format.
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text
 Text_format(const char *format, ...)
@@ -93,10 +107,10 @@ __attribute__((__warn_unused_result__, __nonnull__(1), __format__(printf, 1, 2))
  *
  * @param format The printf-like format string.
  * @param args The args for format.
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text
-Text_vformat(const char *format, va_list args)
+Text_vFormat(const char *format, va_list args)
 __attribute__((__warn_unused_result__, __nonnull__, __format__(__printf__, 1, 0)));
 
 /**
@@ -107,7 +121,7 @@ __attribute__((__warn_unused_result__, __nonnull__, __format__(__printf__, 1, 0)
  *
  * @param bytes The bytes array.
  * @param size The size of the array.
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text Text_fromBytes(const void *bytes, size_t size)
 __attribute__((__warn_unused_result__, __nonnull__));
@@ -119,7 +133,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention the length of the literal must be less than SIZE_MAX.
  *
  * @param literal The string literal.
- * @return A new text instance.
+ * @return a new text instance.
  */
 extern Text Text_fromLiteral(const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
@@ -156,6 +170,36 @@ __attribute__((__warn_unused_result__, __nonnull__));
  */
 extern Text Text_overwriteWithLiteral(Text *ref, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Appends the formatted content to the text.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention format must not be NULL.
+ *
+ * @param ref The text instance reference.
+ * @param format The printf-like format string.
+ * @param ... The args for format
+ * @return the modified text instance
+ */
+extern Text
+Text_appendFormat(Text *ref, const char *format, ...)
+__attribute__((__warn_unused_result__, __nonnull__(1, 2), __format__(printf, 2, 3)));
+
+/**
+ * Appends the formatted content to the text. behaves like Text_appendFormat but takes a va_list.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention format must not be NULL
+ *
+ * @param ref The text instance reference.
+ * @param format The printf-like format string.
+ * @param args The args for format.
+ * @return the modified text instance
+ */
+extern Text
+Text_vAppendFormat(Text *ref, const char *format, va_list args)
+__attribute__((__warn_unused_result__, __nonnull__, __format__(printf, 2, 0)));
 
 /**
  * Appends the bytes array to the text.
@@ -250,7 +294,7 @@ __attribute__((__nonnull__));
  * @attention self must not be NULL.
  *
  * @param self The text instance.
- * @return The size of the text.
+ * @return the size of the text.
  */
 extern size_t Text_length(Text self)
 __attribute__((__warn_unused_result__, __nonnull__));
@@ -261,7 +305,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention self must not be NULL.
  *
  * @param self The text instance.
- * @return The capacity of the text.
+ * @return the capacity of the text.
  */
 extern size_t Text_capacity(Text self)
 __attribute__((__warn_unused_result__, __nonnull__));

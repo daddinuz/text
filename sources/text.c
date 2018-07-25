@@ -26,12 +26,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdio.h>
+#include <ctype.h>
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
 #include <panic/panic.h>
 #include <alligator/alligator.h>
-#include <stdio.h>
 #include "text.h"
 #include "text_config.h"
 
@@ -83,20 +84,76 @@ Text Text_withCapacity(size_t capacity) {
     return header->content;
 }
 
+Text Text_quoted(const void *bytes, size_t size) {
+    assert(bytes);
+    assert(size < SIZE_MAX);
+
+    const char *data = bytes;
+    Text text = Text_withCapacity(size + size / 3);
+
+    text = Text_appendBytes(&text, "\"", 1);
+    for (size_t i = 0; i < size; i++) {
+        switch (*data) {
+            case '"': {
+                text = Text_appendBytes(&text, "\\\"", 2);
+                break;
+            }
+            case '\\': {
+                text = Text_appendBytes(&text, "\\\\", 2);
+                break;
+            }
+            case '/': {
+                text = Text_appendBytes(&text, "\\/", 2);
+                break;
+            }
+            case '\b': {
+                text = Text_appendBytes(&text, "\\b", 2);
+                break;
+            }
+            case '\f': {
+                text = Text_appendBytes(&text, "\\f", 2);
+                break;
+            }
+            case '\n': {
+                text = Text_appendBytes(&text, "\\n", 2);
+                break;
+            }
+            case '\r': {
+                text = Text_appendBytes(&text, "\\r", 2);
+                break;
+            }
+            case '\t': {
+                text = Text_appendBytes(&text, "\\t", 2);
+                break;
+            }
+            default: {
+                if (isprint(*data)) {
+                    text = Text_appendFormat(&text, "%c", *data);
+                } else {
+                    text = Text_appendFormat(&text, "\\u%04hhx", *data);
+                }
+                break;
+            }
+        }
+        data++;
+    }
+    text = Text_appendBytes(&text, "\"", 1);
+
+    return text;
+}
+
 Text Text_format(const char *format, ...) {
     assert(format);
-
     va_list args;
     va_start(args, format);
-    Text text = Text_vformat(format, args);
+    Text text = Text_vFormat(format, args);
     va_end(args);
     return text;
 }
 
-Text Text_vformat(const char *format, va_list args) {
+Text Text_vFormat(const char *format, va_list args) {
     assert(format);
     va_list argsCopy;
-
     va_copy(argsCopy, args);
     const int formattedSize = vsnprintf(NULL, 0, format, argsCopy);
     va_end(argsCopy);
@@ -148,6 +205,39 @@ Text Text_overwriteWithLiteral(Text *ref, const char *const literal) {
     assert(*ref);
     assert(literal);
     return Text_overwriteWithBytes(ref, literal, strlen(literal));
+}
+
+Text Text_appendFormat(Text *const ref, const char *const format, ...) {
+    assert(ref);
+    assert(*ref);
+    assert(format);
+    va_list args;
+    va_start(args, format);
+    Text text = Text_vAppendFormat(ref, format, args);
+    va_end(args);
+    return text;
+}
+
+Text Text_vAppendFormat(Text *ref, const char *format, va_list args) {
+    assert(ref);
+    assert(*ref);
+    assert(format);
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+    const int formattedSize = vsnprintf(NULL, 0, format, argsCopy);
+    va_end(argsCopy);
+
+    if (formattedSize < 0) {
+        Panic_terminate("Unable to format string");
+    }
+
+    const size_t oldLength = Text_length(*ref), newLength = (size_t) formattedSize;
+    Text text = Text_expandToFit(ref, oldLength + newLength);
+    struct Text_Header *header = (struct Text_Header *) text - 1;
+
+    vsnprintf(header->content + oldLength, newLength + 1, format, args);
+    header->length += newLength;
+    return text;
 }
 
 Text Text_appendBytes(Text *ref, const void *const bytes, const size_t size) {

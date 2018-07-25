@@ -28,10 +28,9 @@
 
 #include <text.h>
 #include <stdio.h>
-#include <stdint.h>
 
 int main() {
-    Text text = Text_format("size max is: %lu\n", SIZE_MAX);
+    Text text = Text_quoted("tab\tseparated\ttext\tè\t?", 23);
     printf("[length: %zu, capacity: %zu] %s", Text_length(text), Text_capacity(text), text);
 
     Text_delete(text);

@@ -39,8 +39,14 @@ Feature(new);
 Feature(withCapacity);
 Feature(withCapacity_checkRuntimeErrors);
 
+Feature(quoted);
+Feature(quoted_checkRuntimeErrors);
+
 Feature(format);
 Feature(format_checkRuntimeErrors);
+
+Feature(vFormat);
+Feature(vFormat_checkRuntimeErrors);
 
 Feature(fromBytes);
 Feature(fromBytes_checkRuntimeErrors);
@@ -53,6 +59,12 @@ Feature(overwriteWithBytes_checkRuntimeErrors);
 
 Feature(overwriteWithLiteral);
 Feature(overwriteWithLiteral_checkRuntimeErrors);
+
+Feature(appendFormat);
+Feature(appendFormat_checkRuntimeErrors);
+
+Feature(vAppendFormat);
+Feature(vAppendFormat_checkRuntimeErrors);
 
 Feature(appendBytes);
 Feature(appendBytes_checkRuntimeErrors);

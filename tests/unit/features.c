@@ -88,6 +88,114 @@ Feature(withCapacity_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
+Feature(quoted) {
+    Text sut = NULL;
+
+    {
+        const char BYTES[] = "";
+        const char EXPECTED[] = "\"\"";
+        const size_t BYTES_SIZE = 0;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_quoted(BYTES, BYTES_SIZE);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED, "%s", sut);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+    }
+
+    Text_delete(sut);
+
+    {
+        const char BYTES[] = " \" \\ / \b \f \n \r \t \0 ";
+        const char EXPECTED[] = "\" \\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u0000 \"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_quoted(BYTES, BYTES_SIZE);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+    }
+
+    Text_delete(sut);
+
+    {
+        const char BYTES[] = "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o";
+        const char EXPECTED[] = "\"a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_quoted(BYTES, BYTES_SIZE);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+    }
+
+    Text_delete(sut);
+
+    {
+        const char BYTES[] = "1a\"2b\\3c/4d\b5e\f6f\n7g\r8h\t9i\0" "10l\1" "11m\2" "12n\3" "13o";
+        const char EXPECTED[] = "\"1a\\\"2b\\\\3c\\/4d\\b5e\\f6f\\n7g\\r8h\\t9i\\u000010l\\u000111m\\u000212n\\u000313o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        sut = Text_quoted(BYTES, BYTES_SIZE);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+    }
+
+    Text_delete(sut);
+
+    {
+        const char BYTES[] = "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o";
+        const char EXPECTED[] = "\"a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_greater(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = EXPECTED_SIZE;
+
+        sut = Text_quoted(BYTES, BYTES_SIZE);
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+    }
+
+    Text_delete(sut);
+}
+
+Feature(quoted_checkRuntimeErrors) {
+    Text sut = NULL;
+    const void *bytes = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_quoted(bytes, 0);
+        (void) sut;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_quoted("", SIZE_MAX);
+        (void) sut;
+    }
+
+    assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+}
+
 Feature(format) {
     Text sut = NULL;
 
@@ -203,6 +311,14 @@ Feature(format_checkRuntimeErrors) {
     }
 
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
+Feature(vFormat) {
+
+}
+
+Feature(vFormat_checkRuntimeErrors) {
+
 }
 
 Feature(fromBytes) {
@@ -379,6 +495,71 @@ Feature(overwriteWithLiteral_checkRuntimeErrors) {
 
     assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
     Text_delete(sut);
+}
+
+Feature(appendFormat) {
+#define FORMAT  "%02d %s %c !", 5, "lorem", 'a'
+
+    size_t n;
+    Text sut = Text_new();
+    const char seed[] = "05 lorem a !";
+    const size_t startCapacity = Text_capacity(sut), seedSize = (sizeof(seed) / sizeof(seed[0])) - 1;
+
+    for (n = 0; Text_length(sut) <= startCapacity; n++) {
+        assert_equal(Text_length(sut), n * seedSize);
+        assert_equal(Text_capacity(sut), startCapacity);
+        if (n > 0) {
+            for (size_t i = 0; i < n; i++) {
+                assert_memory_equal(seedSize, sut + (i * seedSize), seed);
+            }
+        } else {
+            assert_string_equal(sut, "");
+        }
+        sut = Text_appendFormat(&sut, FORMAT);
+    }
+
+    for (const size_t k = n + 5; n < k; n++) {
+        assert_equal(Text_length(sut), n * seedSize);
+        assert_greater(Text_capacity(sut), startCapacity);
+        for (size_t i = 0; i < n; i++) {
+            assert_memory_equal(seedSize, sut + (i * seedSize), seed);
+        }
+        sut = Text_appendFormat(&sut, FORMAT);
+    }
+
+    Text_delete(sut);
+
+#undef FORMAT
+}
+
+Feature(appendFormat_checkRuntimeErrors) {
+    Text sut = NULL;
+    const char *format = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_appendFormat(&sut, "%s", "lorem");
+        (void) sut;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+    sut = Text_new();
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_appendFormat(&sut, format, NULL);
+        (void) sut;
+    }
+
+    assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+    Text_delete(sut);
+}
+
+Feature(vAppendFormat) {
+
+}
+
+Feature(vAppendFormat_checkRuntimeErrors) {
+
 }
 
 Feature(appendBytes) {
