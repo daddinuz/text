@@ -528,9 +528,10 @@ Feature(overwrite_checkRuntimeErrors) {
 
 Feature(overwriteWithFormat) {
     {
-        Text sut = Text_new();
+        Text tmp = Text_new();
 
-        sut = Text_overwriteWithFormat(&sut, "%s", "");
+        Text sut = Text_overwriteWithFormat(&tmp, "%s", "");
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), 0);
         assert_string_equal(sut, "");
@@ -539,9 +540,10 @@ Feature(overwriteWithFormat) {
     }
 
     {
-        Text sut = Text_new();
+        Text tmp = Text_new();
 
-        sut = Text_overwriteWithFormat(&sut, "%02d lorem %s%c", 5, "ipsum", '\n');
+        Text sut = Text_overwriteWithFormat(&tmp, "%02d lorem %s%c", 5, "ipsum", '\n');
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), strlen("05 lorem ipsum\n"));
         assert_string_equal(sut, "05 lorem ipsum\n");
@@ -550,9 +552,10 @@ Feature(overwriteWithFormat) {
     }
 
     {
-        Text sut = Text_fromLiteral("lorem ipsum");
+        Text tmp = Text_fromLiteral("lorem ipsum");
 
-        sut = Text_overwriteWithFormat(&sut, "lorem %02d %s%c", 5, "ipsum", '\n');
+        Text sut = Text_overwriteWithFormat(&tmp, "lorem %02d %s%c", 5, "ipsum", '\n');
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), strlen("lorem 05 ipsum\n"));
         assert_string_equal(sut, "lorem 05 ipsum\n");
