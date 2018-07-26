@@ -998,6 +998,8 @@ Feature(appendLiteral_checkRuntimeErrors) {
 }
 
 Feature(quote) {
+    Text tmp = NULL;
+
     {
         const char BYTES[] = "";
         const char EXPECTED[] = "\"\"";
@@ -1006,7 +1008,9 @@ Feature(quote) {
         const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
 
         Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
-        sut = Text_quote(&sut);
+        tmp = Text_quote(&sut);
+        assert_null(sut);
+        sut = tmp;
 
         assert_not_null(sut);
         assert_string_equal(sut, EXPECTED);
@@ -1025,7 +1029,9 @@ Feature(quote) {
         const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
 
         Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
-        sut = Text_quote(&sut);
+        tmp = Text_quote(&sut);
+        assert_null(sut);
+        sut = tmp;
 
         assert_not_null(sut);
         assert_string_equal(sut, EXPECTED);
@@ -1044,7 +1050,9 @@ Feature(quote) {
         const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
 
         Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
-        sut = Text_quote(&sut);
+        tmp = Text_quote(&sut);
+        assert_null(sut);
+        sut = tmp;
 
         assert_not_null(sut);
         assert_string_equal(sut, EXPECTED);
@@ -1063,7 +1071,9 @@ Feature(quote) {
         const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
 
         Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
-        sut = Text_quote(&sut);
+        tmp = Text_quote(&sut);
+        assert_null(sut);
+        sut = tmp;
 
         assert_not_null(sut);
         assert_string_equal(sut, EXPECTED);
@@ -1082,7 +1092,9 @@ Feature(quote) {
         const size_t EXPECTED_CAPACITY = EXPECTED_SIZE;
 
         Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
-        sut = Text_quote(&sut);
+        tmp = Text_quote(&sut);
+        assert_null(sut);
+        sut = tmp;
 
         assert_not_null(sut);
         assert_string_equal(sut, EXPECTED);
