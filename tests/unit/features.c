@@ -1204,12 +1204,15 @@ Feature(clear_checkRuntimeErrors) {
 Feature(expandToFit) {
     const char *content = "lorem ipsum";
     const size_t size = strlen(content);
-    Text sut = Text_fromLiteral(content);
+    Text sut = Text_fromLiteral(content), tmp = NULL;
 
     for (size_t i = 1; i <= 6; ++i) {
         {
             const size_t capacity = Text_capacity(sut);
-            sut = Text_expandToFit(&sut, capacity - 1);
+            tmp = Text_expandToFit(&sut, capacity - 1);
+            assert_null(sut);
+            sut = tmp;
+
             assert_equal(capacity, Text_capacity(sut));
             assert_equal(size, Text_length(sut));
             assert_string_equal(content, sut);
@@ -1217,7 +1220,10 @@ Feature(expandToFit) {
 
         {
             const size_t capacity = Text_capacity(sut);
-            sut = Text_expandToFit(&sut, capacity);
+            tmp = Text_expandToFit(&sut, capacity);
+            assert_null(sut);
+            sut = tmp;
+
             assert_equal(capacity, Text_capacity(sut));
             assert_equal(size, Text_length(sut));
             assert_string_equal(content, sut);
@@ -1225,7 +1231,10 @@ Feature(expandToFit) {
 
         {
             const size_t capacity = Text_capacity(sut);
-            sut = Text_expandToFit(&sut, capacity + i);
+            tmp = Text_expandToFit(&sut, capacity + i);
+            assert_null(sut);
+            sut = tmp;
+
             assert_greater(Text_capacity(sut), capacity);
             assert_equal(size, Text_length(sut));
             assert_string_equal(content, sut);
@@ -1233,7 +1242,10 @@ Feature(expandToFit) {
 
         {
             const size_t capacity = Text_capacity(sut);
-            sut = Text_expandToFit(&sut, capacity / 4);
+            tmp = Text_expandToFit(&sut, capacity / 4);
+            assert_null(sut);
+            sut = tmp;
+
             assert_equal(capacity, Text_capacity(sut));
             assert_equal(size, Text_length(sut));
             assert_string_equal(content, sut);
