@@ -847,13 +847,16 @@ Feature(vAppendFormat_checkRuntimeErrors) {
 }
 
 Feature(appendBytes) {
-    Text sut = Text_withCapacity(0);
+    Text sut = Text_withCapacity(0), tmp = NULL;
 
     {
         const char bytes[] = "lo\0rem";
         const size_t size = sizeof(bytes) - 1;
 
-        sut = Text_appendBytes(&sut, "lo\0rem", sizeof("lo\0rem") - 1);
+        tmp = Text_appendBytes(&sut, "lo\0rem", sizeof("lo\0rem") - 1);
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_memory_equal(size, bytes, sut);
@@ -863,7 +866,10 @@ Feature(appendBytes) {
         const char bytes[] = "lo\0remip\0sum";
         const size_t size = sizeof(bytes) - 1;
 
-        sut = Text_appendBytes(&sut, "ip\0sum", sizeof("ip\0sum") - 1);
+        tmp = Text_appendBytes(&sut, "ip\0sum", sizeof("ip\0sum") - 1);
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_memory_equal(size, bytes, sut);
@@ -873,7 +879,10 @@ Feature(appendBytes) {
         const char bytes[] = "lo\0remip\0sumdo\0lor";
         const size_t size = sizeof(bytes) - 1;
 
-        sut = Text_appendBytes(&sut, "do\0lor", sizeof("do\0lor") - 1);
+        tmp = Text_appendBytes(&sut, "do\0lor", sizeof("do\0lor") - 1);
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_memory_equal(size, bytes, sut);
