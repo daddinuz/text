@@ -448,6 +448,80 @@ Feature(duplicate_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
+Feature(overwrite) {
+    {
+        Text seed = Text_new(), sut = Text_new();
+
+        sut = Text_overwrite(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_new(), sut = Text_fromLiteral("lorem ipsum");
+
+        sut = Text_overwrite(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromLiteral("lorem ipsum"), sut = Text_new();
+
+        sut = Text_overwrite(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromLiteral("lorem ipsum"), sut = Text_fromLiteral("foo spam");
+
+        sut = Text_overwrite(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    // TODO test expansion
+}
+
+Feature(overwrite_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    {
+        Text sut = NULL, other = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_overwrite(&sut, other);
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+        Text_delete(other);
+    }
+
+    {
+        Text sut = Text_new(), other = NULL;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_overwrite(&sut, other);
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
 Feature(overwriteWithBytes) {
     Text sut = Text_withCapacity(0);
 

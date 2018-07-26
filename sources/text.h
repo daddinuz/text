@@ -152,6 +152,22 @@ Text_duplicate(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Overwrites the content of the text (expanding it's capacity if needed) with the other text.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention other must not be NULL.
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param bytes The bytes array to write in the text.
+ * @param size The size of the bytes array.
+ * @return the modified text instance
+ */
+extern Text Text_overwrite(Text *ref, TextView other)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * Overwrites the content of the text (expanding it's capacity if needed) with the given bytes array.
  *
  * @attention ref and *ref must not be NULL.
@@ -190,6 +206,8 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention ref and *ref must not be NULL.
  * @attention other must not be NULL.
  *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
  * @param ref The text instance reference.
  * @param other The text to be appended.
  * @return the modified text instance
@@ -203,6 +221,8 @@ __attribute__((__warn_unused_result__, __nonnull__));
  *
  * @attention ref and *ref must not be NULL.
  * @attention format must not be NULL.
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
  *
  * @param ref The text instance reference.
  * @param format The printf-like format string.
@@ -218,6 +238,8 @@ __attribute__((__warn_unused_result__, __nonnull__(1, 2), __format__(printf, 2, 
  *
  * @attention ref and *ref must not be NULL.
  * @attention format must not be NULL
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
  *
  * @param ref The text instance reference.
  * @param format The printf-like format string.

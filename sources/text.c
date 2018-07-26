@@ -84,7 +84,7 @@ Text Text_withCapacity(size_t capacity) {
     return header->content;
 }
 
-Text Text_quoted(const void *bytes, size_t size) {
+Text Text_quoted(const void *bytes, const size_t size) {
     assert(bytes);
     assert(size < SIZE_MAX);
 
@@ -187,9 +187,16 @@ Text Text_fromLiteral(const char *const literal) {
     return Text_fromBytes(literal, strlen(literal));
 }
 
-Text Text_duplicate(TextView self) {
+Text Text_duplicate(const TextView self) {
     assert(self);
     return Text_fromBytes(self, Text_length(self));
+}
+
+Text Text_overwrite(Text *ref, const TextView other) {
+    assert(ref);
+    assert(*ref);
+    assert(other);
+    return Text_overwriteWithBytes(ref, other, Text_length(other));
 }
 
 Text Text_overwriteWithBytes(Text *ref, const void *const bytes, const size_t size) {
@@ -313,7 +320,7 @@ Text Text_shrink(Text *ref) {
     return header->content;
 }
 
-char Text_get(TextView self, const size_t index) {
+char Text_get(const TextView self, const size_t index) {
     assert(self);
     if (index >= Text_length(self)) {
         Panic_terminate("Out of range");
@@ -332,19 +339,19 @@ char Text_put(Text self, const size_t index, const char c) {
     return bk;
 }
 
-size_t Text_length(TextView self) {
+size_t Text_length(const TextView self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;
     return header->length;
 }
 
-size_t Text_capacity(TextView self) {
+size_t Text_capacity(const TextView self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;
     return header->capacity;
 }
 
-bool Text_equals(TextView self, TextView other) {
+bool Text_equals(const TextView self, const TextView other) {
     assert(self);
     assert(other);
     const size_t length = Text_length(self);
