@@ -547,6 +547,80 @@ Feature(overwriteWithLiteral_checkRuntimeErrors) {
     Text_delete(sut);
 }
 
+Feature(append) {
+    {
+        Text seed = Text_new(), sut = Text_new();
+
+        sut = Text_append(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), 0);
+        assert_string_equal(sut, "");
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromLiteral(" ipsum"), sut = Text_new();
+
+        sut = Text_append(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), strlen(" ipsum"));
+        assert_string_equal(sut, " ipsum");
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromLiteral(" ipsum"), sut = Text_new();
+
+        sut = Text_append(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), strlen(" ipsum"));
+        assert_string_equal(sut, " ipsum");
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_new(), sut = Text_fromLiteral("lorem");
+
+        sut = Text_append(&sut, seed);
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), strlen("lorem"));
+        assert_string_equal(sut, "lorem");
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    // TODO test expansion
+}
+
+Feature(append_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    {
+        Text sut = NULL, other = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_append(&sut, other);
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+        Text_delete(other);
+    }
+
+    {
+        Text sut = Text_new(), other = NULL;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_append(&sut, other);
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
 Feature(appendFormat) {
 #define FORMAT  "%02d %s %c !", 5, "lorem", 'a'
 
@@ -646,6 +720,8 @@ Feature(appendBytes) {
     }
 
     Text_delete(sut);
+
+    // TODO test expansion
 }
 
 Feature(appendBytes_checkRuntimeErrors) {

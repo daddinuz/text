@@ -63,6 +63,9 @@ Feature(overwriteWithBytes_checkRuntimeErrors);
 Feature(overwriteWithLiteral);
 Feature(overwriteWithLiteral_checkRuntimeErrors);
 
+Feature(append);
+Feature(append_checkRuntimeErrors);
+
 Feature(appendFormat);
 Feature(appendFormat_checkRuntimeErrors);
 

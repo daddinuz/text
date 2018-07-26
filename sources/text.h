@@ -53,6 +53,7 @@ extern "C" {
  * @attention Every function in this library terminates the program in case of out of memory.
  */
 typedef char *Text;
+typedef const char *TextView;
 
 /**
  * Creates an empty text using default capacity.
@@ -147,7 +148,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @return a new text instance.
  */
 extern Text
-Text_duplicate(Text self)
+Text_duplicate(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -181,6 +182,20 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @return the modified text instance
  */
 extern Text Text_overwriteWithLiteral(Text *ref, const char *literal)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Appends content to the text.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention other must not be NULL.
+ *
+ * @param ref The text instance reference.
+ * @param other The text to be appended.
+ * @return the modified text instance
+ */
+extern Text
+Text_append(Text *ref, TextView other)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -286,7 +301,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention self must not be NULL.
  * @attention terminates execution if index is greater or equals the text's length.
  */
-extern char Text_get(Text self, size_t index)
+extern char Text_get(TextView self, size_t index)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -308,7 +323,7 @@ __attribute__((__nonnull__));
  * @param self The text instance.
  * @return the size of the text.
  */
-extern size_t Text_length(Text self)
+extern size_t Text_length(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -319,7 +334,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @param self The text instance.
  * @return the capacity of the text.
  */
-extern size_t Text_capacity(Text self)
+extern size_t Text_capacity(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -328,7 +343,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention self must not be NULL.
  * @attention other must not be NULL.
  */
-extern bool Text_equals(Text self, Text other)
+extern bool Text_equals(TextView self, TextView other)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**

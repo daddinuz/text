@@ -187,7 +187,7 @@ Text Text_fromLiteral(const char *const literal) {
     return Text_fromBytes(literal, strlen(literal));
 }
 
-Text Text_duplicate(Text self) {
+Text Text_duplicate(TextView self) {
     assert(self);
     return Text_fromBytes(self, Text_length(self));
 }
@@ -210,6 +210,13 @@ Text Text_overwriteWithLiteral(Text *ref, const char *const literal) {
     assert(*ref);
     assert(literal);
     return Text_overwriteWithBytes(ref, literal, strlen(literal));
+}
+
+Text Text_append(Text *ref, TextView other) {
+    assert(ref);
+    assert(*ref);
+    assert(other);
+    return Text_appendBytes(ref, other, Text_length(other));
 }
 
 Text Text_appendFormat(Text *const ref, const char *const format, ...) {
@@ -249,7 +256,7 @@ Text Text_appendBytes(Text *ref, const void *const bytes, const size_t size) {
     assert(ref);
     assert(*ref);
     assert(bytes);
-    assert(size);
+    assert(size < SIZE_MAX);
     struct Text_Header *header = (struct Text_Header *) (*ref) - 1;
     const size_t currentSize = header->length, newSize = size + currentSize;
     Text text = Text_expandToFit(ref, newSize);
@@ -306,7 +313,7 @@ Text Text_shrink(Text *ref) {
     return header->content;
 }
 
-char Text_get(Text self, const size_t index) {
+char Text_get(TextView self, const size_t index) {
     assert(self);
     if (index >= Text_length(self)) {
         Panic_terminate("Out of range");
@@ -325,19 +332,19 @@ char Text_put(Text self, const size_t index, const char c) {
     return bk;
 }
 
-size_t Text_length(Text self) {
+size_t Text_length(TextView self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;
     return header->length;
 }
 
-size_t Text_capacity(Text self) {
+size_t Text_capacity(TextView self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;
     return header->capacity;
 }
 
-bool Text_equals(Text self, Text other) {
+bool Text_equals(TextView self, TextView other) {
     assert(self);
     assert(other);
     const size_t length = Text_length(self);
