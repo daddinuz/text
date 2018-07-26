@@ -387,6 +387,12 @@ extern size_t Text_capacity(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Checks if the string is empty.
+ */
+extern bool Text_isEmpty(TextView self)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * Checks for equality.
  *
  * @attention self must not be NULL.

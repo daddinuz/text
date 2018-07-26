@@ -1205,3 +1205,26 @@ Feature(equals_checkRuntimeErrors) {
 
     Text_delete(sut);
 }
+
+Feature(isEmpty) {
+    Text sut = Text_new();
+    assert_true(Text_isEmpty(sut));
+
+    sut = Text_appendLiteral(&sut, "lorem ipsum");
+    assert_false(Text_isEmpty(sut));
+
+    Text_delete(sut);
+}
+
+Feature(isEmpty_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        const bool r = Text_isEmpty(sut);
+        (void) r;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+    Text_delete(sut);
+}

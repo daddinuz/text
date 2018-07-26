@@ -108,6 +108,9 @@ Feature(capacity_checkRuntimeErrors);
 Feature(equals);
 Feature(equals_checkRuntimeErrors);
 
+Feature(isEmpty);
+Feature(isEmpty_checkRuntimeErrors);
+
 #ifdef __cplusplus
 }
 #endif

@@ -384,6 +384,11 @@ size_t Text_capacity(const TextView self) {
     return header->capacity;
 }
 
+bool Text_isEmpty(TextView self) {
+    assert(self);
+    return 0 == Text_length(self);
+}
+
 bool Text_equals(const TextView self, const TextView other) {
     assert(self);
     assert(other);
