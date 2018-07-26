@@ -1278,14 +1278,17 @@ Feature(expandToFit_checkRuntimeErrors) {
 }
 
 Feature(shrink) {
-    Text sut = Text_withCapacity(0);
+    Text sut = Text_withCapacity(0), tmp = NULL;
     const char *literal = "lorem";
     const size_t length = strlen(literal);
 
     sut = Text_overwriteWithLiteral(&sut, "lorem ipsum dolor");
     sut = Text_overwriteWithLiteral(&sut, literal);
 
-    sut = Text_shrink(&sut);
+    tmp = Text_shrink(&sut);
+    assert_null(sut);
+    sut = tmp;
+
     assert_equal(length, Text_capacity(sut));
     assert_equal(length, Text_length(sut));
     assert_string_equal(literal, sut);
