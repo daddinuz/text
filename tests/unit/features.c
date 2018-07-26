@@ -450,9 +450,10 @@ Feature(duplicate_checkRuntimeErrors) {
 
 Feature(overwrite) {
     {
-        Text seed = Text_new(), sut = Text_new();
+        Text seed = Text_new(), tmp = Text_new();
 
-        sut = Text_overwrite(&sut, seed);
+        Text sut = Text_overwrite(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), Text_length(seed));
         assert_string_equal(sut, seed);
@@ -462,9 +463,10 @@ Feature(overwrite) {
     }
 
     {
-        Text seed = Text_new(), sut = Text_fromLiteral("lorem ipsum");
+        Text seed = Text_new(), tmp = Text_fromLiteral("lorem ipsum");
 
-        sut = Text_overwrite(&sut, seed);
+        Text sut = Text_overwrite(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), Text_length(seed));
         assert_string_equal(sut, seed);
@@ -474,9 +476,10 @@ Feature(overwrite) {
     }
 
     {
-        Text seed = Text_fromLiteral("lorem ipsum"), sut = Text_new();
+        Text seed = Text_fromLiteral("lorem ipsum"), tmp = Text_new();
 
-        sut = Text_overwrite(&sut, seed);
+        Text sut = Text_overwrite(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), Text_length(seed));
         assert_string_equal(sut, seed);
@@ -486,9 +489,10 @@ Feature(overwrite) {
     }
 
     {
-        Text seed = Text_fromLiteral("lorem ipsum"), sut = Text_fromLiteral("foo spam");
+        Text seed = Text_fromLiteral("lorem ipsum"), tmp = Text_fromLiteral("foo spam");
 
-        sut = Text_overwrite(&sut, seed);
+        Text sut = Text_overwrite(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), Text_length(seed));
         assert_string_equal(sut, seed);
