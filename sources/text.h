@@ -311,6 +311,17 @@ extern Text Text_appendLiteral(Text *ref, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Modifies text quoting (JSON compliant) it's content.
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @return the modified text instance
+ */
+extern Text Text_quote(Text *ref)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * To lower case.
  *
  * @param self The text instance.

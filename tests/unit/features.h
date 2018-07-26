@@ -87,6 +87,9 @@ Feature(appendBytes_checkRuntimeErrors);
 Feature(appendLiteral);
 Feature(appendLiteral_checkRuntimeErrors);
 
+Feature(quote);
+Feature(quote_checkRuntimeErrors);
+
 Feature(lower);
 Feature(lower_checkRuntimeErrors);
 

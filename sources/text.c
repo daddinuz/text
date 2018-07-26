@@ -314,6 +314,16 @@ Text Text_appendLiteral(Text *ref, const char *const literal) {
     return Text_appendBytes(ref, literal, strlen(literal));
 }
 
+Text Text_quote(Text *ref) {
+    assert(ref);
+    assert(*ref);
+    Text self = *ref;
+    self = Text_quoted(self, Text_length(self));
+    Text_delete(*ref);
+    *ref = NULL;
+    return self;
+}
+
 void Text_lower(Text self) {
     assert(self);
     const size_t length = Text_length(self);

@@ -960,6 +960,113 @@ Feature(appendLiteral_checkRuntimeErrors) {
     }
 }
 
+Feature(quote) {
+    {
+        const char BYTES[] = "";
+        const char EXPECTED[] = "\"\"";
+        const size_t BYTES_SIZE = 0;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
+        sut = Text_quote(&sut);
+
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+        Text_delete(sut);
+    }
+
+    {
+        const char BYTES[] = " \" \\ / \b \f \n \r \t \0 ";
+        const char EXPECTED[] = "\" \\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u0000 \"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
+        sut = Text_quote(&sut);
+
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+        Text_delete(sut);
+    }
+
+    {
+        const char BYTES[] = "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o";
+        const char EXPECTED[] = "\"a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
+        sut = Text_quote(&sut);
+
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+        Text_delete(sut);
+    }
+
+    {
+        const char BYTES[] = "1a\"2b\\3c/4d\b5e\f6f\n7g\r8h\t9i\0" "10l\1" "11m\2" "12n\3" "13o";
+        const char EXPECTED[] = "\"1a\\\"2b\\\\3c\\/4d\\b5e\\f6f\\n7g\\r8h\\t9i\\u000010l\\u000111m\\u000212n\\u000313o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_less(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = TEXT_DEFAULT_CAPACITY;
+
+        Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
+        sut = Text_quote(&sut);
+
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+        Text_delete(sut);
+    }
+
+    {
+        const char BYTES[] = "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o" "a\"b\\c/d\be\ff\ng\rh\ti\0l\1m\2n\3o";
+        const char EXPECTED[] = "\"a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o" "a\\\"b\\\\c\\/d\\be\\ff\\ng\\rh\\ti\\u0000l\\u0001m\\u0002n\\u0003o\"";
+        const size_t BYTES_SIZE = sizeof(BYTES) - 1;
+        const size_t EXPECTED_SIZE = sizeof(EXPECTED) - 1;
+        assert_greater(EXPECTED_SIZE, TEXT_DEFAULT_CAPACITY);
+        const size_t EXPECTED_CAPACITY = EXPECTED_SIZE;
+
+        Text sut = Text_fromBytes(BYTES, BYTES_SIZE);
+        sut = Text_quote(&sut);
+
+        assert_not_null(sut);
+        assert_string_equal(sut, EXPECTED);
+        assert_equal(Text_length(sut), EXPECTED_SIZE);
+        assert_greater_equal(Text_capacity(sut), EXPECTED_CAPACITY);
+
+        Text_delete(sut);
+    }
+}
+
+Feature(quote_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_quote(&sut);
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
 Feature(lower) {
     Text sut = Text_fromBytes(
             "0123456789\0abcdefghijklmnopqrstuvwxyz\0ABCDEFGHIJKLMNOPQRSTUVWXYZ\0!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \0\t\n\r",
