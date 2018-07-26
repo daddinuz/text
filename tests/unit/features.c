@@ -597,7 +597,7 @@ Feature(vOverwriteWithFormat_checkRuntimeErrors) {
 }
 
 Feature(overwriteWithBytes) {
-    Text sut = Text_withCapacity(0);
+    Text sut = NULL, tmp = Text_withCapacity(0);
 
     const struct ByteArray bytesArray[] = {
             {.bytes="", .size=0},
@@ -610,7 +610,9 @@ Feature(overwriteWithBytes) {
         const void *bytes = bytesArray[i].bytes;
         const size_t size = bytesArray[i].size;
 
-        sut = Text_overwriteWithBytes(&sut, bytes, size);
+        sut = Text_overwriteWithBytes(&tmp, bytes, size);
+        assert_null(tmp);
+        tmp = sut;
 
         assert_greater_equal(Text_capacity(sut), Text_length(sut));
         assert_equal(size, Text_length(sut));
