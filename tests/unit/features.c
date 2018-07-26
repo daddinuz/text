@@ -781,7 +781,7 @@ Feature(appendFormat) {
 #define FORMAT  "%02d %s %c !", 5, "lorem", 'a'
 
     size_t n;
-    Text sut = Text_new();
+    Text sut = Text_new(), tmp = NULL;
     const char seed[] = "05 lorem a !";
     const size_t startCapacity = Text_capacity(sut), seedSize = (sizeof(seed) / sizeof(seed[0])) - 1;
 
@@ -795,7 +795,9 @@ Feature(appendFormat) {
         } else {
             assert_string_equal(sut, "");
         }
-        sut = Text_appendFormat(&sut, FORMAT);
+        tmp = Text_appendFormat(&sut, FORMAT);
+        assert_null(sut);
+        sut = tmp;
     }
 
     for (const size_t k = n + 5; n < k; n++) {
@@ -804,7 +806,9 @@ Feature(appendFormat) {
         for (size_t i = 0; i < n; i++) {
             assert_memory_equal(seedSize, sut + (i * seedSize), seed);
         }
-        sut = Text_appendFormat(&sut, FORMAT);
+        tmp = Text_appendFormat(&sut, FORMAT);
+        assert_null(sut);
+        sut = tmp;
     }
 
     Text_delete(sut);
