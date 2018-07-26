@@ -60,6 +60,12 @@ Feature(duplicate_checkRuntimeErrors);
 Feature(overwrite);
 Feature(overwrite_checkRuntimeErrors);
 
+Feature(overwriteWithFormat);
+Feature(overwriteWithFormat_checkRuntimeErrors);
+
+Feature(vOverwriteWithFormat);
+Feature(vOverwriteWithFormat_checkRuntimeErrors);
+
 Feature(overwriteWithBytes);
 Feature(overwriteWithBytes_checkRuntimeErrors);
 

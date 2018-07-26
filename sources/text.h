@@ -84,8 +84,7 @@ __attribute__((__warn_unused_result__));
  * @param size The size of bytes.
  * @return a new text instance.
  */
-extern Text
-Text_quoted(const void *bytes, size_t size)
+extern Text Text_quoted(const void *bytes, size_t size)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -97,8 +96,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @param ... The args for format.
  * @return a new text instance.
  */
-extern Text
-Text_format(const char *format, ...)
+extern Text Text_format(const char *format, ...)
 __attribute__((__warn_unused_result__, __nonnull__(1), __format__(printf, 1, 2)));
 
 /**
@@ -110,8 +108,7 @@ __attribute__((__warn_unused_result__, __nonnull__(1), __format__(printf, 1, 2))
  * @param args The args for format.
  * @return a new text instance.
  */
-extern Text
-Text_vFormat(const char *format, va_list args)
+extern Text Text_vFormat(const char *format, va_list args)
 __attribute__((__warn_unused_result__, __nonnull__, __format__(__printf__, 1, 0)));
 
 /**
@@ -147,8 +144,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @param self The text instance to be duplicated.
  * @return a new text instance.
  */
-extern Text
-Text_duplicate(TextView self)
+extern Text Text_duplicate(TextView self)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -166,6 +162,39 @@ __attribute__((__warn_unused_result__, __nonnull__));
  */
 extern Text Text_overwrite(Text *ref, TextView other)
 __attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Overwrites the content of the text (expanding it's capacity if needed) with the formatted content.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention format must not be NULL.
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param format The printf-like format string.
+ * @param ... The args for format
+ * @return the modified text instance
+ */
+extern Text Text_overwriteWithFormat(Text *ref, const char *format, ...)
+__attribute__((__warn_unused_result__, __nonnull__(1, 2), __format__(printf, 2, 3)));
+
+/**
+ * Overwrites the content of the text (expanding it's capacity if needed) with the formatted content.
+ * Behaves like Text_overwriteWithFormat but takes a va_list.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention format must not be NULL
+ *
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param format The printf-like format string.
+ * @param args The args for format.
+ * @return the modified text instance
+ */
+extern Text Text_vOverwriteWithFormat(Text *ref, const char *format, va_list args)
+__attribute__((__warn_unused_result__, __nonnull__, __format__(printf, 2, 0)));
 
 /**
  * Overwrites the content of the text (expanding it's capacity if needed) with the given bytes array.
@@ -212,8 +241,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @param other The text to be appended.
  * @return the modified text instance
  */
-extern Text
-Text_append(Text *ref, TextView other)
+extern Text Text_append(Text *ref, TextView other)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
@@ -229,12 +257,12 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @param ... The args for format
  * @return the modified text instance
  */
-extern Text
-Text_appendFormat(Text *ref, const char *format, ...)
+extern Text Text_appendFormat(Text *ref, const char *format, ...)
 __attribute__((__warn_unused_result__, __nonnull__(1, 2), __format__(printf, 2, 3)));
 
 /**
- * Appends the formatted content to the text. behaves like Text_appendFormat but takes a va_list.
+ * Appends the formatted content to the text.
+ * Behaves like Text_appendFormat but takes a va_list.
  *
  * @attention ref and *ref must not be NULL.
  * @attention format must not be NULL
@@ -246,8 +274,7 @@ __attribute__((__warn_unused_result__, __nonnull__(1, 2), __format__(printf, 2, 
  * @param args The args for format.
  * @return the modified text instance
  */
-extern Text
-Text_vAppendFormat(Text *ref, const char *format, va_list args)
+extern Text Text_vAppendFormat(Text *ref, const char *format, va_list args)
 __attribute__((__warn_unused_result__, __nonnull__, __format__(printf, 2, 0)));
 
 /**

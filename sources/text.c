@@ -199,6 +199,39 @@ Text Text_overwrite(Text *ref, const TextView other) {
     return Text_overwriteWithBytes(ref, other, Text_length(other));
 }
 
+Text Text_overwriteWithFormat(Text *ref, const char *format, ...) {
+    assert(ref);
+    assert(*ref);
+    assert(format);
+    va_list args;
+    va_start(args, format);
+    Text text = Text_vOverwriteWithFormat(ref, format, args);
+    va_end(args);
+    return text;
+}
+
+Text Text_vOverwriteWithFormat(Text *ref, const char *format, va_list args) {
+    assert(ref);
+    assert(*ref);
+    assert(format);
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+    const int formattedSize = vsnprintf(NULL, 0, format, argsCopy);
+    va_end(argsCopy);
+
+    if (formattedSize < 0) {
+        Panic_terminate("Unable to format string");
+    }
+
+    const size_t newLength = (size_t) formattedSize;
+    Text text = Text_expandToFit(ref, newLength);
+    struct Text_Header *header = (struct Text_Header *) text - 1;
+
+    vsnprintf(header->content, newLength + 1, format, args);
+    header->length = newLength;
+    return text;
+}
+
 Text Text_overwriteWithBytes(Text *ref, const void *const bytes, const size_t size) {
     assert(ref);
     assert(*ref);

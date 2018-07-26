@@ -522,6 +522,73 @@ Feature(overwrite_checkRuntimeErrors) {
     }
 }
 
+Feature(overwriteWithFormat) {
+    {
+        Text sut = Text_new();
+
+        sut = Text_overwriteWithFormat(&sut, "%s", "");
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), 0);
+        assert_string_equal(sut, "");
+
+        Text_delete(sut);
+    }
+
+    {
+        Text sut = Text_new();
+
+        sut = Text_overwriteWithFormat(&sut, "%02d lorem %s%c", 5, "ipsum", '\n');
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), strlen("05 lorem ipsum\n"));
+        assert_string_equal(sut, "05 lorem ipsum\n");
+
+        Text_delete(sut);
+    }
+
+    {
+        Text sut = Text_fromLiteral("lorem ipsum");
+
+        sut = Text_overwriteWithFormat(&sut, "lorem %02d %s%c", 5, "ipsum", '\n');
+        assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        assert_equal(Text_length(sut), strlen("lorem 05 ipsum\n"));
+        assert_string_equal(sut, "lorem 05 ipsum\n");
+
+        Text_delete(sut);
+    }
+
+    // TODO test expansion
+}
+
+Feature(overwriteWithFormat_checkRuntimeErrors) {
+    Text sut = NULL;
+    const char *format = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_overwriteWithFormat(&sut, "%s", "lorem");
+        (void) sut;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+    sut = Text_new();
+    traits_unit_wraps(SIGABRT) {
+        sut = Text_overwriteWithFormat(&sut, format, NULL);
+        (void) sut;
+    }
+
+    assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+    Text_delete(sut);
+}
+
+Feature(vOverwriteWithFormat) {
+
+}
+
+Feature(vOverwriteWithFormat_checkRuntimeErrors) {
+
+}
+
 Feature(overwriteWithBytes) {
     Text sut = Text_withCapacity(0);
 
