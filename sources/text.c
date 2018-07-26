@@ -314,6 +314,22 @@ Text Text_appendLiteral(Text *ref, const char *const literal) {
     return Text_appendBytes(ref, literal, strlen(literal));
 }
 
+void Text_lower(Text self) {
+    assert(self);
+    const size_t length = Text_length(self);
+    for (size_t i = 0; i < length; i++) {
+        self[i] = (char) tolower(self[i]);
+    }
+}
+
+void Text_upper(Text self) {
+    assert(self);
+    const size_t length = Text_length(self);
+    for (size_t i = 0; i < length; i++) {
+        self[i] = (char) toupper(self[i]);
+    }
+}
+
 void Text_clear(Text self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;

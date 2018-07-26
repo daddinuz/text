@@ -311,6 +311,22 @@ extern Text Text_appendLiteral(Text *ref, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * To lower case.
+ *
+ * @param self The text instance.
+ */
+extern void Text_lower(Text self)
+__attribute__((__nonnull__));
+
+/**
+ * To upper case.
+ *
+ * @param self The text instance.
+ */
+extern void Text_upper(Text self)
+__attribute__((__nonnull__));
+
+/**
  * Clears the content of the text without changing its capacity.
  *
  * @attention self must not be NULL.

@@ -960,6 +960,66 @@ Feature(appendLiteral_checkRuntimeErrors) {
     }
 }
 
+Feature(lower) {
+    Text sut = Text_fromBytes(
+            "0123456789\0abcdefghijklmnopqrstuvwxyz\0ABCDEFGHIJKLMNOPQRSTUVWXYZ\0!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \0\t\n\r",
+            102
+    );
+
+    const size_t length = Text_length(sut), capacity = Text_capacity(sut);
+    Text_lower(sut);
+    assert_equal(capacity, Text_capacity(sut));
+    assert_equal(length, Text_length(sut));
+    assert_memory_equal(
+            102,
+            "0123456789\0abcdefghijklmnopqrstuvwxyz\0abcdefghijklmnopqrstuvwxyz\0!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \0\t\n\r",
+            sut
+    );
+
+    Text_delete(sut);
+}
+
+Feature(lower_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        Text_lower(sut);
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
+Feature(upper) {
+    Text sut = Text_fromBytes(
+            "0123456789\0abcdefghijklmnopqrstuvwxyz\0ABCDEFGHIJKLMNOPQRSTUVWXYZ\0!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \0\t\n\r",
+            102
+    );
+
+    const size_t length = Text_length(sut), capacity = Text_capacity(sut);
+    Text_upper(sut);
+    assert_equal(capacity, Text_capacity(sut));
+    assert_equal(length, Text_length(sut));
+    assert_memory_equal(
+            102,
+            "0123456789\0ABCDEFGHIJKLMNOPQRSTUVWXYZ\0ABCDEFGHIJKLMNOPQRSTUVWXYZ\0!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \0\t\n\r",
+            sut
+    );
+
+    Text_delete(sut);
+}
+
+Feature(upper_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        Text_upper(sut);
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
 Feature(clear) {
     Text sut = Text_withCapacity(0);
 
