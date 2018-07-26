@@ -102,8 +102,8 @@ Feature(clear_checkRuntimeErrors);
 Feature(expandToFit);
 Feature(expandToFit_checkRuntimeErrors);
 
-Feature(shrink);
-Feature(shrink_checkRuntimeErrors);
+Feature(shrinkToFit);
+Feature(shrinkToFit_checkRuntimeErrors);
 
 Feature(get);
 Feature(get_checkRuntimeErrors);

@@ -363,7 +363,7 @@ Text Text_expandToFit(Text *ref, size_t capacity) {
     return header->content;
 }
 
-Text Text_shrink(Text *ref) {
+Text Text_shrinkToFit(Text *ref) {
     assert(ref);
     assert(*ref);
     struct Text_Header *header = (struct Text_Header *) (*ref) - 1;

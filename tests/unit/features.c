@@ -1277,7 +1277,7 @@ Feature(expandToFit_checkRuntimeErrors) {
     }
 }
 
-Feature(shrink) {
+Feature(shrinkToFit) {
     Text sut = Text_withCapacity(0), tmp = NULL;
     const char *literal = "lorem";
     const size_t length = strlen(literal);
@@ -1285,7 +1285,7 @@ Feature(shrink) {
     sut = Text_overwriteWithLiteral(&sut, "lorem ipsum dolor");
     sut = Text_overwriteWithLiteral(&sut, literal);
 
-    tmp = Text_shrink(&sut);
+    tmp = Text_shrinkToFit(&sut);
     assert_null(sut);
     sut = tmp;
 
@@ -1296,12 +1296,12 @@ Feature(shrink) {
     Text_delete(sut);
 }
 
-Feature(shrink_checkRuntimeErrors) {
+Feature(shrinkToFit_checkRuntimeErrors) {
     Text sut = NULL;
     const size_t counter = traits_unit_get_wrapped_signals_counter();
 
     traits_unit_wraps(SIGABRT) {
-        sut = Text_shrink(&sut);
+        sut = Text_shrinkToFit(&sut);
     }
 
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());

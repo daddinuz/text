@@ -361,14 +361,14 @@ extern Text Text_expandToFit(Text *ref, size_t capacity)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
- * Clears the capacity of the text to fit the size of its content.
+ * Shrinks the capacity of the text to fit the size of its content.
  *
  * @attention ref and *ref must not be NULL.
  * @attention the reference to the text will be invalidated after this call, the new text is returned.
  *
  * @return the modified text instance
  */
-extern Text Text_shrink(Text *ref)
+extern Text Text_shrinkToFit(Text *ref)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
