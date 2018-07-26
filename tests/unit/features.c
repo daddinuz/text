@@ -701,9 +701,10 @@ Feature(overwriteWithLiteral_checkRuntimeErrors) {
 
 Feature(append) {
     {
-        Text seed = Text_new(), sut = Text_new();
+        Text seed = Text_new(), tmp = Text_new();
 
-        sut = Text_append(&sut, seed);
+        Text sut = Text_append(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), 0);
         assert_string_equal(sut, "");
@@ -713,9 +714,10 @@ Feature(append) {
     }
 
     {
-        Text seed = Text_fromLiteral(" ipsum"), sut = Text_new();
+        Text seed = Text_fromLiteral(" ipsum"), tmp = Text_new();
 
-        sut = Text_append(&sut, seed);
+        Text sut = Text_append(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), strlen(" ipsum"));
         assert_string_equal(sut, " ipsum");
@@ -725,9 +727,10 @@ Feature(append) {
     }
 
     {
-        Text seed = Text_fromLiteral(" ipsum"), sut = Text_new();
+        Text seed = Text_fromLiteral(" ipsum"), tmp = Text_new();
 
-        sut = Text_append(&sut, seed);
+        Text sut = Text_append(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), strlen(" ipsum"));
         assert_string_equal(sut, " ipsum");
@@ -737,9 +740,10 @@ Feature(append) {
     }
 
     {
-        Text seed = Text_new(), sut = Text_fromLiteral("lorem");
+        Text seed = Text_new(), tmp = Text_fromLiteral("lorem");
 
-        sut = Text_append(&sut, seed);
+        Text sut = Text_append(&tmp, seed);
+        assert_null(tmp);
         assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
         assert_equal(Text_length(sut), strlen("lorem"));
         assert_string_equal(sut, "lorem");
