@@ -658,7 +658,7 @@ Feature(overwriteWithBytes_checkRuntimeErrors) {
 }
 
 Feature(overwriteWithLiteral) {
-    Text sut = Text_withCapacity(0);
+    Text sut = NULL, tmp = Text_withCapacity(0);
     const char *literals[] = {"", "Hello world!", "lorem ipsum dolor", "sit,\0amet,\0consectetur,\0adipisci"};
     const size_t literalsSize = sizeof(literals) / sizeof(literals[0]);
 
@@ -666,7 +666,9 @@ Feature(overwriteWithLiteral) {
         const char *literal = literals[i];
         const size_t length = strlen(literal);
 
-        sut = Text_overwriteWithLiteral(&sut, literal);
+        sut = Text_overwriteWithLiteral(&tmp, literal);
+        assert_null(tmp);
+        tmp = sut;
 
         assert_greater_equal(Text_capacity(sut), Text_length(sut));
         assert_equal(length, Text_length(sut));
