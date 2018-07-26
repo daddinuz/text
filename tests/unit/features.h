@@ -54,6 +54,9 @@ Feature(fromBytes_checkRuntimeErrors);
 Feature(fromLiteral);
 Feature(fromLiteral_checkRuntimeErrors);
 
+Feature(duplicate);
+Feature(duplicate_checkRuntimeErrors);
+
 Feature(overwriteWithBytes);
 Feature(overwriteWithBytes_checkRuntimeErrors);
 

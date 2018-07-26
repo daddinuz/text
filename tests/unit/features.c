@@ -398,6 +398,56 @@ Feature(fromLiteral_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
+Feature(duplicate) {
+    {
+        Text seed = Text_fromLiteral("");
+        Text sut = Text_duplicate(seed);
+
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_equal(Text_capacity(sut), Text_capacity(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromLiteral("lorem ipsum dolor");
+        Text sut = Text_duplicate(seed);
+
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_equal(Text_capacity(sut), Text_capacity(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+
+    {
+        Text seed = Text_fromBytes("lorem\0ipsum\0dolor", 17);
+        Text sut = Text_duplicate(seed);
+
+        assert_equal(Text_length(sut), Text_length(seed));
+        assert_equal(Text_capacity(sut), Text_capacity(seed));
+        assert_string_equal(sut, seed);
+
+        Text_delete(sut);
+        Text_delete(seed);
+    }
+}
+
+Feature(duplicate_checkRuntimeErrors) {
+    Text seed = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        Text sut = Text_duplicate(seed);
+        (void) sut;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
 Feature(overwriteWithBytes) {
     Text sut = Text_withCapacity(0);
 

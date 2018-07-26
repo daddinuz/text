@@ -139,6 +139,18 @@ extern Text Text_fromLiteral(const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Duplicates a text instance.
+ *
+ * @attention s must not be NULL.
+ *
+ * @param self The text instance to be duplicated.
+ * @return a new text instance.
+ */
+extern Text
+Text_duplicate(Text self)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * Overwrites the content of the text (expanding it's capacity if needed) with the given bytes array.
  *
  * @attention ref and *ref must not be NULL.

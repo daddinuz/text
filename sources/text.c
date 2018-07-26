@@ -187,6 +187,11 @@ Text Text_fromLiteral(const char *const literal) {
     return Text_fromBytes(literal, strlen(literal));
 }
 
+Text Text_duplicate(Text self) {
+    assert(self);
+    return Text_fromBytes(self, Text_length(self));
+}
+
 Text Text_overwriteWithBytes(Text *ref, const void *const bytes, const size_t size) {
     assert(ref);
     assert(*ref);
