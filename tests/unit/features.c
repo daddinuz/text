@@ -930,13 +930,16 @@ Feature(appendBytes_checkRuntimeErrors) {
 Feature(appendLiteral) {
     size_t size;
     const char *literal;
-    Text sut = Text_withCapacity(0);
+    Text sut = Text_withCapacity(0), tmp = NULL;
 
     {
         literal = "lorem";
         size = strlen(literal);
 
-        sut = Text_appendLiteral(&sut, "lorem");
+        tmp = Text_appendLiteral(&sut, "lorem");
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_string_equal(literal, sut);
@@ -946,7 +949,10 @@ Feature(appendLiteral) {
         literal = "loremipsum";
         size = strlen(literal);
 
-        sut = Text_appendLiteral(&sut, "ipsum");
+        tmp = Text_appendLiteral(&sut, "ipsum");
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_string_equal(literal, sut);
@@ -956,7 +962,10 @@ Feature(appendLiteral) {
         literal = "loremipsumdolor";
         size = strlen(literal);
 
-        sut = Text_appendLiteral(&sut, "dolor");
+        tmp = Text_appendLiteral(&sut, "dolor");
+        assert_null(sut);
+        sut = tmp;
+
         assert_equal(size > TEXT_DEFAULT_CAPACITY ? size : TEXT_DEFAULT_CAPACITY, Text_capacity(sut));
         assert_equal(size, Text_length(sut));
         assert_string_equal(literal, sut);
