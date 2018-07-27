@@ -312,6 +312,26 @@ extern Text Text_appendLiteral(Text *ref, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Insert bytes into this text at the index position.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention index must be less or equal than the length of the text.
+ * @attention bytes must not be NULL.
+ * @attention size must be less than SIZE_MAX.
+ *
+ * @attention terminates execution if index is greater than the length of the text.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param index The index position
+ * @param bytes The bytes array to append.
+ * @param size The size of the bytes array.
+ * @return the modified text instance
+ */
+extern Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * Modifies text quoting (JSON compliant) it's content.
  *
  * @attention the reference to the text will be invalidated after this call, the new text is returned.

@@ -997,6 +997,117 @@ Feature(appendLiteral_checkRuntimeErrors) {
     }
 }
 
+Feature(insertBytes) {
+    const void *expected = "Hello world!";
+    const size_t expectedSize = strlen(expected);
+    
+    {
+        Text sut = Text_new(), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertBytes(&sut, 0, "", 0);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), 0);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_string_equal(sut, "");
+
+        Text_delete(sut);
+    }
+
+    {   // prepend
+        Text sut = Text_new(), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertBytes(&sut, 0, expected, expectedSize);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+
+    {   // insert middle
+        Text sut = Text_fromLiteral("Helld!"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertBytes(&sut, strlen("Hel"), "lo wor", strlen("lo wor"));
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+
+    {   // append
+        Text sut = Text_fromLiteral("Hello"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertBytes(&sut, Text_length(sut), " world!", strlen(" world!"));
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+}
+
+Feature(insertBytes_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    { // ref and *ref must not be NULL.
+        Text sut = NULL;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertBytes(&sut, 0, "", 0);
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+        Text *ref = &sut;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertBytes(ref, 0, "", 0);
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+    }
+
+    { // index must be less or equal than the length of the text.
+        Text sut = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertBytes(&sut, 1, "", 0);
+        }
+        assert_equal(counter + 3, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+
+    { // bytes must not be NULL.
+        const void *bytes = NULL;
+        Text sut = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertBytes(&sut, 0, bytes, 0);
+        }
+        assert_equal(counter + 4, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+
+    { // size must be less than SIZE_MAX.
+        Text sut = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertBytes(&sut, 0, "", SIZE_MAX);
+        }
+        assert_equal(counter + 5, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
 Feature(quote) {
     Text tmp = NULL;
 
