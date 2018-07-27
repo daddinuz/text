@@ -138,6 +138,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
  * Duplicates a text instance.
+ * Note: capacity may be different between instances.
  *
  * @attention s must not be NULL.
  *
