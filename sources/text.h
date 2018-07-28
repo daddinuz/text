@@ -323,12 +323,30 @@ __attribute__((__warn_unused_result__, __nonnull__));
  * @attention the reference to the text will be invalidated after this call, the new text is returned.
  *
  * @param ref The text instance reference.
- * @param index The index position
+ * @param index The index position.
  * @param bytes The bytes array to append.
  * @param size The size of the bytes array.
  * @return the modified text instance
  */
 extern Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Insert literal into this text at the index position.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention index must be less or equal than the length of the text.
+ * @attention literal must not be NULL.
+ *
+ * @attention terminates execution if index is greater than the length of the text.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param index The index position.
+ * @param literal The literal to insert.
+ * @return the modified text instance
+ */
+extern Text Text_insertLiteral(Text *ref, size_t index, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**

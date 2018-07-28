@@ -176,7 +176,7 @@ Text Text_fromBytes(const void *const bytes, const size_t size) {
     assert(size < SIZE_MAX);
     Text text = Text_withCapacity(size);
     struct Text_Header *header = (struct Text_Header *) text - 1;
-    memmove(text, bytes, size);
+    memcpy(text, bytes, size);
     header->length = size;
     text[size] = 0;
     return text;
@@ -324,9 +324,17 @@ Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size) {
     struct Text_Header *header = (struct Text_Header *) self - 1;
     char *destination = self + index;
     memmove(destination + size, destination, header->length - index);
-    memmove(destination , bytes, size);
+    memmove(destination, bytes, size);
     header->length += size;
     return self;
+}
+
+Text Text_insertLiteral(Text *ref, size_t index, const char *literal) {
+    assert(ref);
+    assert(*ref);
+    assert(index <= Text_length(*ref));
+    assert(literal);
+    return Text_insertBytes(ref, index, literal, strlen(literal));
 }
 
 Text Text_quote(Text *ref) {

@@ -90,6 +90,9 @@ Feature(appendLiteral_checkRuntimeErrors);
 Feature(insertBytes);
 Feature(insertBytes_checkRuntimeErrors);
 
+Feature(insertLiteral);
+Feature(insertLiteral_checkRuntimeErrors);
+
 Feature(quote);
 Feature(quote_checkRuntimeErrors);
 

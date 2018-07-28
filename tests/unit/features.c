@@ -998,8 +998,8 @@ Feature(appendLiteral_checkRuntimeErrors) {
 }
 
 Feature(insertBytes) {
-    const void *expected = "Hello world!";
-    const size_t expectedSize = strlen(expected);
+    const char expected[] = "Hello\0world!";
+    const size_t expectedSize = (sizeof(expected) / sizeof(expected[0])) - 1;
     
     {
         Text sut = Text_new(), tmp;
@@ -1035,7 +1035,7 @@ Feature(insertBytes) {
         Text sut = Text_fromLiteral("Helld!"), tmp;
         const size_t capacity = Text_capacity(sut);
 
-        tmp = Text_insertBytes(&sut, strlen("Hel"), "lo wor", strlen("lo wor"));
+        tmp = Text_insertBytes(&sut, 3, "lo\0wor", 6);
         assert_null(sut);
         sut = tmp;
 
@@ -1050,7 +1050,7 @@ Feature(insertBytes) {
         Text sut = Text_fromLiteral("Hello"), tmp;
         const size_t capacity = Text_capacity(sut);
 
-        tmp = Text_insertBytes(&sut, Text_length(sut), " world!", strlen(" world!"));
+        tmp = Text_insertBytes(&sut, Text_length(sut), "\0world!", 7);
         assert_null(sut);
         sut = tmp;
 
@@ -1104,6 +1104,108 @@ Feature(insertBytes_checkRuntimeErrors) {
             sut = Text_insertBytes(&sut, 0, "", SIZE_MAX);
         }
         assert_equal(counter + 5, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
+Feature(insertLiteral) {
+    const void *expected = "Hello world!";
+    const size_t expectedSize = strlen(expected);
+
+    {
+        Text sut = Text_new(), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertLiteral(&sut, 0, "");
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), 0);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_string_equal(sut, "");
+
+        Text_delete(sut);
+    }
+
+    {   // prepend
+        Text sut = Text_new(), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertLiteral(&sut, 0, expected);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+
+    {   // insert middle
+        Text sut = Text_fromLiteral("Helld!"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertLiteral(&sut, strlen("Hel"), "lo wor");
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+
+    {   // append
+        Text sut = Text_fromLiteral("Hello"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insertLiteral(&sut, Text_length(sut), " world!");
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(sut);
+    }
+}
+
+Feature(insertLiteral_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    { // ref and *ref must not be NULL.
+        Text sut = NULL;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertLiteral(&sut, 0, "");
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+        Text *ref = &sut;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertLiteral(ref, 0, "");
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+    }
+
+    { // index must be less or equal than the length of the text.
+        Text sut = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertLiteral(&sut, 1, "");
+        }
+        assert_equal(counter + 3, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+
+    { // literal must not be NULL.
+        const void *literal = NULL;
+        Text sut = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insertLiteral(&sut, 0, literal);
+        }
+        assert_equal(counter + 4, traits_unit_get_wrapped_signals_counter());
         Text_delete(sut);
     }
 }
