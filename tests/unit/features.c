@@ -997,10 +997,117 @@ Feature(appendLiteral_checkRuntimeErrors) {
     }
 }
 
+Feature(insert) {
+    const void *expected = "Hello world!";
+    const size_t expectedSize = strlen(expected);
+
+    {
+        Text sut = Text_new(), text = Text_new(), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insert(&sut, 0, text);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), 0);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_string_equal(sut, text);
+
+        Text_delete(text);
+        Text_delete(sut);
+    }
+
+    {   // prepend
+        Text sut = Text_new(), text = Text_fromLiteral(expected), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insert(&sut, 0, text);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(text);
+        Text_delete(sut);
+    }
+
+    {   // insert middle
+        Text sut = Text_fromLiteral("Helld!"), text = Text_fromLiteral("lo wor"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insert(&sut, 3, text);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(text);
+        Text_delete(sut);
+    }
+
+    {   // append
+        Text sut = Text_fromLiteral("Hello"), text = Text_fromLiteral(" world!"), tmp;
+        const size_t capacity = Text_capacity(sut);
+
+        tmp = Text_insert(&sut, Text_length(sut), text);
+        assert_null(sut);
+        sut = tmp;
+
+        assert_equal(Text_length(sut), expectedSize);
+        assert_equal(Text_capacity(sut), capacity);
+        assert_memory_equal(expectedSize, sut, expected);
+
+        Text_delete(text);
+        Text_delete(sut);
+    }
+}
+
+Feature(insert_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    { // ref and *ref must not be NULL.
+        Text sut = NULL, text = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insert(&sut, 0, text);
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+        Text *ref = &sut;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insert(ref, 0, text);
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+        Text_delete(text);
+    }
+
+    { // index must be less or equal than the length of the text.
+        Text sut = Text_new(), text = Text_new();
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insert(&sut, 1, text);
+        }
+        assert_equal(counter + 3, traits_unit_get_wrapped_signals_counter());
+        Text_delete(text);
+        Text_delete(sut);
+    }
+
+    { // text must not be NULL.
+        Text sut = Text_new(), text = NULL;
+        traits_unit_wraps(SIGABRT) {
+            sut = Text_insert(&sut, 0, text);
+        }
+        assert_equal(counter + 4, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
 Feature(insertBytes) {
     const char expected[] = "Hello\0world!";
     const size_t expectedSize = (sizeof(expected) / sizeof(expected[0])) - 1;
-    
+
     {
         Text sut = Text_new(), tmp;
         const size_t capacity = Text_capacity(sut);

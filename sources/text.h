@@ -312,6 +312,24 @@ extern Text Text_appendLiteral(Text *ref, const char *literal)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Insert text at the index position.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention index must be less or equal than the length of the text.
+ * @attention text must not be NULL.
+ *
+ * @attention terminates execution if index is greater than the length of the text.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param index The index position.
+ * @param text The text to insert.
+ * @return the modified text instance
+ */
+extern Text Text_insert(Text *ref, size_t index, TextView text)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
  * Insert bytes into this text at the index position.
  *
  * @attention ref and *ref must not be NULL.
@@ -324,7 +342,7 @@ __attribute__((__warn_unused_result__, __nonnull__));
  *
  * @param ref The text instance reference.
  * @param index The index position.
- * @param bytes The bytes array to append.
+ * @param bytes The bytes array to insert.
  * @param size The size of the bytes array.
  * @return the modified text instance
  */

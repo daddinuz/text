@@ -306,6 +306,14 @@ Text Text_appendLiteral(Text *ref, const char *const literal) {
     return Text_appendBytes(ref, literal, strlen(literal));
 }
 
+Text Text_insert(Text *ref, size_t index, TextView text) {
+    assert(ref);
+    assert(*ref);
+    assert(index <= Text_length(*ref));
+    assert(text);
+    return Text_insertBytes(ref, index, text, Text_length(text));
+}
+
 Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size) {
     assert(ref);
     assert(*ref);
