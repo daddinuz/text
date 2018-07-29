@@ -30,12 +30,11 @@
 #include <stdio.h>
 
 int main() {
-    Text text = Text_fromLiteral("Hello world!");
+    Text text = Text_fromLiteral("\t \tHello world!\t \t");
+    Text_trim(text);
+    Text_eraseRange(text, sizeof("Hello") - 1, Text_length(text) - 1);
     text = Text_quote(&text);
-    Text_eraseRange(text, 6, Text_length(text) - 1);
-
     printf("Text(content='%s', length=%zu, capacity=%zu)", text, Text_length(text), Text_capacity(text));
-
     Text_delete(text);
     return 0;
 }

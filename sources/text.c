@@ -60,6 +60,10 @@ static size_t calculateNewCapacity(size_t currentCapacity, const size_t targetCa
     return currentCapacity;
 }
 
+static bool isTrimmable(char c) {
+    return isspace(c) || isblank(c) || !isprint(c);
+}
+
 struct Text_Header {
     size_t capacity;
     size_t length;
@@ -404,6 +408,27 @@ void Text_eraseRange(Text self, const size_t start, const size_t end) {
             self[header->length -= (end - start)] = 0;
         }
     }
+}
+
+void Text_trimLeft(Text self) {
+    assert(self);
+    char *cursor = self;
+    for (const char *end = cursor + Text_length(self); cursor < end && isTrimmable(*cursor); cursor++) {}
+    Text_eraseRange(self, 0, cursor - self);
+}
+
+void Text_trimRight(Text self) {
+    assert(self);
+    char *cursor;
+    const size_t length = Text_length(self);
+    for (cursor = self + length; self < cursor && isTrimmable(*cursor); cursor--) {}
+    Text_eraseRange(self, (isTrimmable(*cursor) ? cursor : cursor + 1) - self, length);
+}
+
+void Text_trim(Text self) {
+    assert(self);
+    Text_trimLeft(self);
+    Text_trimRight(self);
 }
 
 void Text_lower(Text self) {

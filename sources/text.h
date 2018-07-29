@@ -435,6 +435,30 @@ extern void Text_eraseRange(Text self, size_t start, size_t end)
 __attribute__((__nonnull__));
 
 /**
+ * Removes leading whitespace from left.
+ *
+ * @param self The text instance.
+ */
+extern void Text_trimLeft(Text self)
+__attribute__((__nonnull__));
+
+/**
+ * Removes leading whitespace from right.
+ *
+ * @param self The text instance.
+ */
+extern void Text_trimRight(Text self)
+__attribute__((__nonnull__));
+
+/**
+ * Removes leading whitespace from both endings.
+ *
+ * @param self The text instance.
+ */
+extern void Text_trim(Text self)
+__attribute__((__nonnull__));
+
+/**
  * To lower case.
  *
  * @param self The text instance.
