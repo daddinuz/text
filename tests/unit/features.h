@@ -90,6 +90,12 @@ Feature(appendLiteral_checkRuntimeErrors);
 Feature(insert);
 Feature(insert_checkRuntimeErrors);
 
+Feature(insertFormat);
+Feature(insertFormat_checkRuntimeErrors);
+
+Feature(vInsertFormat);
+Feature(vInsertFormat_checkRuntimeErrors);
+
 Feature(insertBytes);
 Feature(insertBytes_checkRuntimeErrors);
 

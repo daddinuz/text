@@ -30,7 +30,9 @@
 #include <stdio.h>
 
 int main() {
-    Text text = Text_quoted("tab\tseparated\ttext\tè\t?", 23);
+    Text text = Text_fromLiteral("Hello world!");
+    text = Text_quote(&text);
+
     printf("[length: %zu, capacity: %zu] %s", Text_length(text), Text_capacity(text), text);
 
     Text_delete(text);

@@ -330,6 +330,45 @@ extern Text Text_insert(Text *ref, size_t index, TextView text)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Inserts a formatted string into this text.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention index must be less or equal than the length of the text.
+ * @attention format must not be NULL.
+ *
+ * @attention terminates execution if index is greater than the length of the text.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param index The index position.
+ * @param format The printf-like format string.
+ * @param ... The args for format.
+ * @return the modified text instance
+ */
+extern Text Text_insertFormat(Text *ref, size_t index, const char *format, ...)
+__attribute__((__warn_unused_result__, __nonnull__(1, 3), __format__(printf, 3, 4)));
+
+/**
+ * Inserts a formatted string into this text.
+ * Behaves like Text_insertFormat but takes a va_list.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention index must be less or equal than the length of the text.
+ * @attention format must not be NULL
+ *
+ * @attention terminates execution if index is greater than the length of the text.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @param ref The text instance reference.
+ * @param index The index position.
+ * @param format The printf-like format string.
+ * @param args The args for format.
+ * @return the modified text instance
+ */
+extern Text Text_vInsertFormat(Text *ref, size_t index, const char *format, va_list args)
+__attribute__((__warn_unused_result__, __nonnull__, __format__(printf, 3, 0)));
+
+/**
  * Insert bytes into this text at the index position.
  *
  * @attention ref and *ref must not be NULL.

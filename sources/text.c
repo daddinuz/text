@@ -314,6 +314,44 @@ Text Text_insert(Text *ref, size_t index, TextView text) {
     return Text_insertBytes(ref, index, text, Text_length(text));
 }
 
+Text Text_insertFormat(Text *ref, size_t index, const char *format, ...) {
+    assert(ref);
+    assert(*ref);
+    assert(index <= Text_length(*ref));
+    assert(format);
+    va_list args;
+    va_start(args, format);
+    Text text = Text_vInsertFormat(ref, index, format, args);
+    va_end(args);
+    return text;
+}
+
+Text Text_vInsertFormat(Text *ref, size_t index, const char *format, va_list args) {
+    assert(ref);
+    assert(*ref);
+    assert(index <= Text_length(*ref));
+    assert(format);
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+    const int formattedSize = vsnprintf(NULL, 0, format, argsCopy);
+    va_end(argsCopy);
+
+    if (formattedSize < 0) {
+        Panic_terminate("Unable to format string");
+    }
+
+    const size_t additional = (size_t) formattedSize;
+    Text self = Text_expandToFit(ref, Text_length(*ref) + additional);
+    struct Text_Header *header = (struct Text_Header *) self - 1;
+    char *ptr = self + index;
+    const char previous = self[index];
+    memmove(ptr + additional, ptr, header->length - index);
+    vsnprintf(ptr, additional + 1, format, args);
+    self[index + additional] = previous;
+    self[header->length += additional] = 0;
+    return self;
+}
+
 Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size) {
     assert(ref);
     assert(*ref);
@@ -322,9 +360,9 @@ Text Text_insertBytes(Text *ref, size_t index, const void *bytes, size_t size) {
     assert(size < SIZE_MAX);
     Text self = Text_expandToFit(ref, Text_length(*ref) + size);
     struct Text_Header *header = (struct Text_Header *) self - 1;
-    char *destination = self + index;
-    memmove(destination + size, destination, header->length - index);
-    memmove(destination, bytes, size);
+    char *ptr = self + index;
+    memmove(ptr + size, ptr, header->length - index);
+    memmove(ptr, bytes, size);
     self[header->length += size] = 0;
     return self;
 }
