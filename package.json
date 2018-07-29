@@ -3,7 +3,7 @@
   "repo": "daddinuz/text",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "...",
+  "description": "A string library with support for complex operations on textual data.",
   "keywords": [
   ],
   "src": [
