@@ -1427,6 +1427,104 @@ Feature(insertLiteral_checkRuntimeErrors) {
     }
 }
 
+Feature(eraseRange) {
+    {   // no-op
+        const char *content = "lorem";
+        Text sut = Text_fromLiteral(content);
+        const size_t length = Text_length(sut), capacity = Text_capacity(sut);
+
+        Text_eraseRange(sut, 0, 0);
+        assert_equal(length, Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal(content, sut);
+
+        Text_eraseRange(sut, length, length);
+        assert_equal(length, Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal(content, sut);
+
+        Text_delete(sut);
+    }
+
+    {   // erase from begin
+        Text sut = Text_fromLiteral("Hello world!");
+        const size_t capacity = Text_capacity(sut);
+
+        Text_eraseRange(sut, 0, strlen("Hello "));
+        assert_equal(strlen("world!"), Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal("world!", sut);
+
+        Text_delete(sut);
+    }
+
+    {   // erase middle
+        Text sut = Text_fromLiteral("Hello world!");
+        const size_t capacity = Text_capacity(sut);
+
+        Text_eraseRange(sut, strlen("Hello"), Text_length(sut) - 1);
+        assert_equal(strlen("Hello!"), Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal("Hello!", sut);
+
+        Text_delete(sut);
+    }
+
+    {   // erase till end
+        Text sut = Text_fromLiteral("Hello world!");
+        const size_t capacity = Text_capacity(sut);
+
+        Text_eraseRange(sut, strlen("Hello"), Text_length(sut));
+        assert_equal(strlen("Hello"), Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal("Hello", sut);
+
+        Text_delete(sut);
+    }
+
+    {   // erase all
+        Text sut = Text_fromLiteral("Hello world!");
+        const size_t capacity = Text_capacity(sut);
+
+        Text_eraseRange(sut, 0, Text_length(sut));
+        assert_equal(0, Text_length(sut));
+        assert_equal(capacity, Text_capacity(sut));
+        assert_string_equal("", sut);
+
+        Text_delete(sut);
+    }
+}
+
+Feature(eraseRange_checkRuntimeErrors) {
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    { // self must not be NULL.
+        Text sut = NULL;
+        traits_unit_wraps(SIGABRT) {
+            Text_eraseRange(sut, 0, 0);
+        }
+        assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+    }
+
+    { // start must be less or equal than end.
+        Text sut = Text_fromLiteral("lorem");
+        traits_unit_wraps(SIGABRT) {
+            Text_eraseRange(sut, 1, 0);
+        }
+        assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+
+    { // end must be less or equal than the length of the text.
+        Text sut = Text_fromLiteral("lorem");
+        traits_unit_wraps(SIGABRT) {
+            Text_eraseRange(sut, 0, sizeof("lorem") + 1);
+        }
+        assert_equal(counter + 3, traits_unit_get_wrapped_signals_counter());
+        Text_delete(sut);
+    }
+}
+
 Feature(quote) {
     Text tmp = NULL;
 

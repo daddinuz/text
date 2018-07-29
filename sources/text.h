@@ -418,6 +418,23 @@ extern Text Text_quote(Text *ref)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
+ * Erases content from this text.
+ * Note: A starting index equal to the ending one will result in a no-op.
+ *
+ * @attention self must not be NULL.
+ * @attention start must be less or equal than end.
+ * @attention end must be less or equal than the length of the text.
+ *
+ * @attention terminates execution if range is invalid.
+ *
+ * @param self The text instance.
+ * @param start Starting index included.
+ * @param end Ending index excluded.
+ */
+extern void Text_eraseRange(Text self, size_t start, size_t end)
+__attribute__((__nonnull__));
+
+/**
  * To lower case.
  *
  * @param self The text instance.

@@ -102,6 +102,9 @@ Feature(insertBytes_checkRuntimeErrors);
 Feature(insertLiteral);
 Feature(insertLiteral_checkRuntimeErrors);
 
+Feature(eraseRange);
+Feature(eraseRange_checkRuntimeErrors);
+
 Feature(quote);
 Feature(quote_checkRuntimeErrors);
 

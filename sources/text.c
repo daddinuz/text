@@ -385,6 +385,27 @@ Text Text_quote(Text *ref) {
     return self;
 }
 
+void Text_eraseRange(Text self, const size_t start, const size_t end) {
+    assert(self);
+    assert(start <= end);
+    assert(end <= Text_length(self));
+    if (start != end) {
+        const size_t length = Text_length(self);
+        if (length == end) {
+            if (0 == start) {
+                Text_clear(self);
+            } else {
+                struct Text_Header *header = (struct Text_Header *) self - 1;
+                self[header->length -= (end - start)] = 0;
+            }
+        } else {
+            struct Text_Header *header = (struct Text_Header *) self - 1;
+            memmove(self + start, self + end, length - end);
+            self[header->length -= (end - start)] = 0;
+        }
+    }
+}
+
 void Text_lower(Text self) {
     assert(self);
     const size_t length = Text_length(self);

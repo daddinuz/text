@@ -32,8 +32,9 @@
 int main() {
     Text text = Text_fromLiteral("Hello world!");
     text = Text_quote(&text);
+    Text_eraseRange(text, 6, Text_length(text) - 1);
 
-    printf("[length: %zu, capacity: %zu] %s", Text_length(text), Text_capacity(text), text);
+    printf("Text(content='%s', length=%zu, capacity=%zu)", text, Text_length(text), Text_capacity(text));
 
     Text_delete(text);
     return 0;
