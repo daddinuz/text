@@ -8,7 +8,8 @@
   ],
   "src": [
     "sources/text.h",
-    "sources/text.c"
+    "sources/text.c",
+    "sources/text_config.h",
   ],
   "dependencies": {
     "daddinuz/panic": "0.3.0",
