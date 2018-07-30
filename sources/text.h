@@ -485,6 +485,18 @@ extern void Text_clear(Text self)
 __attribute__((__nonnull__));
 
 /**
+ * Sets the length of the text.
+ *
+ * @attention self must not be NULL.
+ * @attention length must not be greater than capacity.
+ *
+ * @param self The text instance.
+ * @param length The new length.
+ */
+extern void Text_setLength(Text self, size_t length)
+__attribute__((__nonnull__));
+
+/**
  * Expands (if needed) the text to fit the requested capacity.
  *
  * @attention ref and *ref must not be NULL.

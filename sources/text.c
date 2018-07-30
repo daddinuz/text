@@ -410,14 +410,14 @@ void Text_eraseRange(Text self, const size_t start, const size_t end) {
     }
 }
 
-void Text_trimLeft(Text self) {
+void Text_trimLeft(Text self) {     // TODO test
     assert(self);
     char *cursor = self;
     for (const char *end = cursor + Text_length(self); cursor < end && isTrimmable(*cursor); cursor++) {}
     Text_eraseRange(self, 0, cursor - self);
 }
 
-void Text_trimRight(Text self) {
+void Text_trimRight(Text self) {    // TODO test
     assert(self);
     char *cursor;
     const size_t length = Text_length(self);
@@ -425,7 +425,7 @@ void Text_trimRight(Text self) {
     Text_eraseRange(self, (isTrimmable(*cursor) ? cursor : cursor + 1) - self, length);
 }
 
-void Text_trim(Text self) {
+void Text_trim(Text self) {         // TODO test
     assert(self);
     Text_trimLeft(self);
     Text_trimRight(self);
@@ -451,6 +451,13 @@ void Text_clear(Text self) {
     assert(self);
     struct Text_Header *header = (struct Text_Header *) self - 1;
     self[header->length = 0] = 0;
+}
+
+void Text_setLength(Text self, size_t length) { // TODO test
+    assert(self);
+    assert(length <= Text_capacity(self));
+    struct Text_Header *header = (struct Text_Header *) self - 1;
+    header->length = length;
 }
 
 Text Text_expandToFit(Text *ref, size_t capacity) {
