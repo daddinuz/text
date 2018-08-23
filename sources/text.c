@@ -523,6 +523,18 @@ char Text_put(Text self, const size_t index, const char c) {
     return bk;
 }
 
+char Text_front(TextView self) {    // TODO test
+    assert(self);
+    assert(Text_length(self) > 0);
+    return self[0];
+}
+
+char Text_back(TextView self) {     // TODO test
+    assert(self);
+    assert(Text_length(self) > 0);
+    return self[Text_length(self) - 1];
+}
+
 char Text_get(const TextView self, const size_t index) {
     assert(self);
     if (index >= Text_length(self)) {

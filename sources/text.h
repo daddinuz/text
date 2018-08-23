@@ -42,10 +42,10 @@ extern "C" {
 
 #define TEXT_VERSION_MAJOR        0
 #define TEXT_VERSION_MINOR        1
-#define TEXT_VERSION_PATCH        1
+#define TEXT_VERSION_PATCH        2
 #define TEXT_VERSION_SUFFIX       ""
 #define TEXT_VERSION_IS_RELEASE   0
-#define TEXT_VERSION_HEX          0x000101
+#define TEXT_VERSION_HEX          0x000102
 
 /**
  * A string library with support for complex operations on textual data
@@ -552,6 +552,24 @@ __attribute__((__nonnull__));
  */
 extern char Text_put(Text self, size_t index, char c)
 __attribute__((__nonnull__));
+
+/**
+ * Gets the front character in the text.
+ *
+ * @attention self must not be NULL.
+ * @attention terminates execution if text is empty.
+ */
+extern char Text_front(TextView self)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Gets the back character in the text.
+ *
+ * @attention self must not be NULL.
+ * @attention terminates execution if text is empty.
+ */
+extern char Text_back(TextView self)
+__attribute__((__warn_unused_result__, __nonnull__));
 
 /**
  * Gets the character in the text at the given index.
