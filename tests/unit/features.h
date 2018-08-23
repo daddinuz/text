@@ -117,17 +117,26 @@ Feature(upper_checkRuntimeErrors);
 Feature(clear);
 Feature(clear_checkRuntimeErrors);
 
+Feature(setLength);
+Feature(setLength_checkRuntimeErrors);
+
 Feature(expandToFit);
 Feature(expandToFit_checkRuntimeErrors);
 
 Feature(shrinkToFit);
 Feature(shrinkToFit_checkRuntimeErrors);
 
-Feature(get);
-Feature(get_checkRuntimeErrors);
+Feature(push);
+Feature(push_checkRuntimeErrors);
 
 Feature(put);
 Feature(put_checkRuntimeErrors);
+
+Feature(pop);
+Feature(pop_checkRuntimeErrors);
+
+Feature(get);
+Feature(get_checkRuntimeErrors);
 
 Feature(length_checkRuntimeErrors);
 Feature(capacity_checkRuntimeErrors);

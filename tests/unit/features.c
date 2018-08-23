@@ -1729,6 +1729,45 @@ Feature(clear_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
+Feature(setLength) {
+    Text sut = Text_new();
+    const size_t capacity = Text_capacity(sut);
+
+    Text_setLength(sut, capacity);
+    assert_equal(capacity, Text_length(sut));
+    assert_equal(capacity, Text_capacity(sut));
+    assert_equal('\0', sut[capacity]);
+
+    sut = Text_overwriteWithLiteral(&sut, "Hello World!");
+    Text_setLength(sut, strlen("Hello"));
+    assert_string_equal("Hello", sut);
+    assert_equal(strlen("Hello"), Text_length(sut));
+    assert_equal(capacity, Text_capacity(sut));
+
+    Text_delete(sut);
+}
+
+Feature(setLength_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        Text_setLength(sut, 0);
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+    sut = Text_new();
+
+    traits_unit_wraps(SIGABRT) {
+        Text_setLength(sut, Text_capacity(sut) + 1);
+    }
+
+    assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+
+    Text_delete(sut);
+}
+
 Feature(expandToFit) {
     const char *content = "lorem ipsum";
     const size_t size = strlen(content);
@@ -1835,35 +1874,69 @@ Feature(shrinkToFit_checkRuntimeErrors) {
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 }
 
-Feature(get) {
-    const char literal[] = "lorem ipsum";
-    const size_t size = sizeof(literal) - 1;
-    Text sut = Text_fromLiteral(literal);
+Feature(push) {
+    char s[TEXT_DEFAULT_CAPACITY + 13];
+    const size_t size = (sizeof(s) / sizeof(s[0])) - 1;
+    Text sut = Text_new();
 
+    memset(s, 0, size + 1);
     for (size_t i = 0; i < size; i++) {
-        assert_equal(literal[i], Text_get(sut, i));
+        s[i] = 'a';
+        sut = Text_push(&sut, 'a');
+        assert_equal(strlen(s), Text_length(sut));
+        assert_string_equal(s, sut);
+        if (Text_length(sut) <= TEXT_DEFAULT_CAPACITY) {
+            assert_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        } else {
+            assert_greater_equal(Text_capacity(sut), TEXT_DEFAULT_CAPACITY);
+        }
     }
 
     Text_delete(sut);
 }
 
-Feature(get_checkRuntimeErrors) {
+Feature(push_checkRuntimeErrors) {
     Text sut = NULL;
     const size_t counter = traits_unit_get_wrapped_signals_counter();
 
     traits_unit_wraps(SIGABRT) {
-        const char _ = Text_get(sut, 8);
-        (void) _;
+        sut = Text_push(&sut, 'a');
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+}
+
+
+Feature(pop) {
+    const char s[] = "Hello World!";
+    const size_t size = sizeof(s) / sizeof(s[0]) - 1;
+    Text sut = Text_fromLiteral(s);
+
+    for (size_t i = 1; i <= size; i++) {
+        const char c = Text_pop(sut);
+        assert_equal(c, s[size - i]);
+        assert_equal(size - i, Text_length(sut));
+    }
+
+    Text_delete(sut);
+}
+
+Feature(pop_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        Text_pop(sut);
     }
 
     assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
 
-    sut = Text_fromLiteral("lorem");
+    sut = Text_new();
 
     traits_unit_wraps(SIGABRT) {
-        const char _ = Text_get(sut, SIZE_MAX);
-        (void) _;
+        Text_pop(sut);
     }
+
     assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
 
     Text_delete(sut);
@@ -1897,6 +1970,40 @@ Feature(put_checkRuntimeErrors) {
 
     traits_unit_wraps(SIGABRT) {
         const char _ = Text_put(sut, SIZE_MAX, 'x');
+        (void) _;
+    }
+    assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());
+
+    Text_delete(sut);
+}
+
+Feature(get) {
+    const char literal[] = "lorem ipsum";
+    const size_t size = sizeof(literal) - 1;
+    Text sut = Text_fromLiteral(literal);
+
+    for (size_t i = 0; i < size; i++) {
+        assert_equal(literal[i], Text_get(sut, i));
+    }
+
+    Text_delete(sut);
+}
+
+Feature(get_checkRuntimeErrors) {
+    Text sut = NULL;
+    const size_t counter = traits_unit_get_wrapped_signals_counter();
+
+    traits_unit_wraps(SIGABRT) {
+        const char _ = Text_get(sut, 8);
+        (void) _;
+    }
+
+    assert_equal(counter + 1, traits_unit_get_wrapped_signals_counter());
+
+    sut = Text_fromLiteral("lorem");
+
+    traits_unit_wraps(SIGABRT) {
+        const char _ = Text_get(sut, SIZE_MAX);
         (void) _;
     }
     assert_equal(counter + 2, traits_unit_get_wrapped_signals_counter());

@@ -42,10 +42,10 @@ extern "C" {
 
 #define TEXT_VERSION_MAJOR        0
 #define TEXT_VERSION_MINOR        1
-#define TEXT_VERSION_PATCH        0
+#define TEXT_VERSION_PATCH        1
 #define TEXT_VERSION_SUFFIX       ""
 #define TEXT_VERSION_IS_RELEASE   0
-#define TEXT_VERSION_HEX          0x000100
+#define TEXT_VERSION_HEX          0x000101
 
 /**
  * A string library with support for complex operations on textual data
@@ -521,13 +521,26 @@ extern Text Text_shrinkToFit(Text *ref)
 __attribute__((__warn_unused_result__, __nonnull__));
 
 /**
- * Gets the character in the text at the given index.
+ * Adds the character into the tail of this text.
+ *
+ * @attention ref and *ref must not be NULL.
+ * @attention the reference to the text will be invalidated after this call, the new text is returned.
+ *
+ * @return the modified text instance
+ */
+extern Text Text_push(Text *ref, char c)
+__attribute__((__warn_unused_result__, __nonnull__));
+
+/**
+ * Removes the character at the tail of this text.
  *
  * @attention self must not be NULL.
- * @attention terminates execution if index is greater or equals the text's length.
+ * @attention self must not be empty.
+ *
+ * @return the removed character.
  */
-extern char Text_get(TextView self, size_t index)
-__attribute__((__warn_unused_result__, __nonnull__));
+extern char Text_pop(Text self)
+__attribute__((__nonnull__));
 
 /**
  * Puts the character in the text at the given index replacing the existing one.
@@ -539,6 +552,15 @@ __attribute__((__warn_unused_result__, __nonnull__));
  */
 extern char Text_put(Text self, size_t index, char c)
 __attribute__((__nonnull__));
+
+/**
+ * Gets the character in the text at the given index.
+ *
+ * @attention self must not be NULL.
+ * @attention terminates execution if index is greater or equals the text's length.
+ */
+extern char Text_get(TextView self, size_t index)
+__attribute__((__warn_unused_result__, __nonnull__));
 
 /**
  * Gets the size of the text.

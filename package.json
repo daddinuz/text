@@ -1,7 +1,7 @@
 {
   "name": "text",
   "repo": "daddinuz/text",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "A string library with support for complex operations on textual data.",
   "keywords": [

@@ -453,11 +453,11 @@ void Text_clear(Text self) {
     self[header->length = 0] = 0;
 }
 
-void Text_setLength(Text self, size_t length) { // TODO test
+void Text_setLength(Text self, size_t length) {
     assert(self);
     assert(length <= Text_capacity(self));
     struct Text_Header *header = (struct Text_Header *) self - 1;
-    header->length = length;
+    self[header->length = length] = 0;
 }
 
 Text Text_expandToFit(Text *ref, size_t capacity) {
@@ -493,12 +493,23 @@ Text Text_shrinkToFit(Text *ref) {
     return header->content;
 }
 
-char Text_get(const TextView self, const size_t index) {
+Text Text_push(Text *ref, char c) {
+    assert(ref);
+    assert(*ref);
+    Text self = *ref;
+    const size_t length = Text_length(self);
+    self = Text_expandToFit(ref, length + 1);
+    Text_setLength(self, length + 1);
+    Text_put(self, length, c);
+    return self;
+}
+
+char Text_pop(Text self) {
     assert(self);
-    if (index >= Text_length(self)) {
-        Panic_terminate("Out of range");
-    }
-    return self[index];
+    const size_t length = Text_length(self) - 1;
+    char c = self[length];
+    Text_setLength(self, length);
+    return c;
 }
 
 char Text_put(Text self, const size_t index, const char c) {
@@ -510,6 +521,14 @@ char Text_put(Text self, const size_t index, const char c) {
     const char bk = *p;
     *p = c;
     return bk;
+}
+
+char Text_get(const TextView self, const size_t index) {
+    assert(self);
+    if (index >= Text_length(self)) {
+        Panic_terminate("Out of range");
+    }
+    return self[index];
 }
 
 size_t Text_length(const TextView self) {
